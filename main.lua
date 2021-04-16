@@ -710,11 +710,47 @@ function love.keypressed(key, scancode, isrepeat)
 					showMessage("Failed to update cart")
 				end
 			end
+		-- Ctrl+X
 		elseif key == "x" then
 			if project.selection then
 				local s = dumplua {"selection", project.selection}
 				love.system.setClipboardText(s)
 				project.selection = nil
+				
+				showMessage("Cut")
+			end
+		-- Ctrl+C
+		elseif key == "c" then
+			if project.selection then
+				local s = dumplua {"selection", project.selection}
+				love.system.setClipboardText(s)
+				placeSelection()
+				
+				showMessage("Copied")
+			end
+		elseif key == "v" then
+			placeSelection() -- to clean selection first
+			
+			local t, err = loadlua(love.system.getClipboardText())
+			if not err then
+				if type(t) == "table" then
+					if t[1] == "selection" then
+						local s = t[2]
+						project.selection = s
+						project.selection.x = roundto8(mx - s.w*4)
+						project.selection.y = roundto8(my - s.h*4)
+						app.tool = "select"
+						
+						showMessage("Pasted")
+					else
+						err = true
+					end
+				else
+					err = true
+				end
+			end
+			if err then
+				showMessage("Failed to paste (did you paste something you're not supposed to?)")
 			end
 		end
 	end
