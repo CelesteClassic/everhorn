@@ -40,7 +40,7 @@ function loadpico8(filename)
 		local line = sections["gfx"][j + 1]
 		for i = 0, spritesheet_data:getWidth() - 1 do
 			local s = string.sub(line, 1 + i, 1 + i)
-			local b = tob2(s)
+			local b = fromhex(s)
 			local c = data.palette[b + 1]
 			spritesheet_data:setPixel(i, j, c[1]/255, c[2]/255, c[3]/255, 1)
 		end
@@ -60,17 +60,89 @@ function loadpico8(filename)
 		data.map[i] = {}
 		for j = 0, 31 do
 			local s = string.sub(sections["map"][j + 1], 1 + 2*i, 2 + 2*i)
-			data.map[i][j] = tob2(s)
+			data.map[i][j] = fromhex(s)
 		end
 		for j = 32, 63 do
 			local i_ = i%64
 			local j_ = i <= 63 and j*2 or j*2 + 1
 			local line = sections["gfx"][j_ + 1] or "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 			local s = string.sub(line, 1 + 2*i_, 2 + 2*i_)
-			data.map[i][j] = tob2_swapnibbles(s)
+			data.map[i][j] = fromhex_swapnibbles(s)
 		end
 	end
 	
+	data.rooms = {}
+	
+	-- code: look for magic comments
+	local code = table.concat(sections["lua"])
+	-- levels
+	local levels_str = string.match(code, "%-%-@everhorn_levels([^@]+)%-%-@everhorn_end")
+	if levels_str then
+		print(levels_str)
+		local levels, err = loadlua(levels_str)
+		if err then error(err) end
+		
+		data.roomBounds = {}
+		for _, s in ipairs(levels) do
+			local x, y, w, h, title = string.match(s, "^([^,]+),([^,]+),([^,]+),([^,]+),([^,]+)$")
+			x, y, w, h = tonumber(x), tonumber(y), tonumber(w), tonumber(h)
+			if x and y and w and h then -- this confirms they're there and they're numbers
+				table.insert(data.roomBounds, {x=x*128, y=y*128, w=w*16, h=h*16})
+			end
+		end
+	end
+	
+	if not data.roomBounds then
+		data.roomBounds = {}
+		for I = 0, 7 do
+			for J = 0, 3 do
+				local b = {x = I*128, y = J*128, w = 16, h = 16}
+				table.insert(data.roomBounds, b)
+			end
+		end
+	end
+	
+	-- mapdata
+	local mapdata_str = string.match(code, "%-%-@everhorn_mapdata([^@]+)%-%-@everhorn_end")
+	if mapdata_str then
+		print(mapdata_str)
+		local mapdata, err = loadlua(mapdata_str)
+		if err then error(err) end
+		
+		for n, levelstr in ipairs(mapdata) do
+			local b = data.roomBounds[n]
+			if b then
+				local room = newRoom(b.x, b.y, b.w, b.h)
+				for i = 0, b.w - 1 do
+					for j = 0, b.h - 1 do
+						local k = i + j*b.w 
+						room.data[i][j] = fromhex(string.sub(levelstr, 1 + 2*k, 2 + 2*k))
+					end
+				end
+				data.rooms[n] = room
+			end
+		end	
+	end
+	
+	-- fill rooms with no mapdata from p8 map
+	for n, b in ipairs(data.roomBounds) do
+		if not data.rooms[n] then
+			local room = newRoom(b.x, b.y, b.w, b.h)
+			
+			for i = 0, b.w - 1 do
+				for j = 0, b.h - 1 do
+					local i1, j1 = div8(b.x) + i, div8(b.y) + j
+					if i1 >= 0 and i1 < 128 and j1 >= 0 and j1 < 64 then
+						room.data[i][j] = data.map[i1][j1]
+					else
+						room.data[i][j] = 0
+					end
+				end
+			end
+			
+			data.rooms[n] = room
+		end
+	end
 	return data
 end
 
@@ -101,18 +173,8 @@ end
 function loadMapFromPico8(filename)
 	local p8data = loadpico8(filename)
 	
-	project.rooms = {}
-	for I = 0, 7 do
-		for J = 0, 3 do
-			local room = newRoom(I*128, J*128, 16, 16)
-			for i = 0, 15 do
-				for j = 0, 15 do
-					room.data[i][j] = p8data.map[I*16 + i][J*16 + j]
-				end
-			end
-			table.insert(project.rooms, room)
-		end
-	end
+	newProject()
+	project.rooms = p8data.rooms
 	
 	return true
 end
@@ -148,14 +210,14 @@ function updateCart(filename)
 	for j = 0, 31 do
 		local line = ""
 		for i = 0, 127 do
-			line = line .. bytetohex(map[i][j])
+			line = line .. tohex(map[i][j])
 		end
 		out[mapstart+j+1] = line
 	end
 	for j = 32, 63 do
 		local line = ""
 		for i = 0, 127 do
-			line = line .. bytetohex_swapnibbles(map[i][j])
+			line = line .. tohex_swapnibbles(map[i][j])
 		end
 		out[gfxstart+(j-32)*2+65] = string.sub(line, 1, 128)
 		out[gfxstart+(j-32)*2+66] = string.sub(line, 129, 256)
@@ -164,7 +226,7 @@ function updateCart(filename)
 	-- code updates
 	for k = 1, #out do
 		if out[k] == "--@everhorn_levels" then
-			while #out >= k+1 and out[k+1] ~= "--@end" do
+			while #out >= k+1 and out[k+1] ~= "--@everhorn_end" do
 				if #out >= k+1 then
 					table.remove(out, k+1)
 				else

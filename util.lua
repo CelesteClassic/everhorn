@@ -1,19 +1,19 @@
-function tob2(s)
+function fromhex(s)
 	return tonumber(s, 16)
 end
 
-function tob2_swapnibbles(s)
-	local x = tob2(s)
+function fromhex_swapnibbles(s)
+	local x = fromhex(s)
 	return math.floor(x/16) + 16*(x%16)
 end
 
 local hext = { [0] = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'a', 'b', 'c', 'd', 'e', 'f'}
 
-function bytetohex(b)
+function tohex(b)
 	return hext[math.floor(b/16)]..hext[b%16]
 end
 
-function bytetohex_swapnibbles(b)
+function tohex_swapnibbles(b)
 	return hext[b%16]..hext[math.floor(b/16)]
 end
 

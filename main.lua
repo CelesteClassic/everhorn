@@ -11,30 +11,29 @@ tms = 4
 -- GLOBAL VARIABLES
 -- and stuff that has to do with them
 
-ui = nil
+function newProject()
+	app = {
+		camX = 0,
+		camY = 0,
+		camScale = 2, --based on camScaleSetting
+		camScaleSetting = 1, -- 0, 1, 2 is 1x, 2x, 3x etc, -1, -2, -3 is 0.5x, 0.25x, 0.125x
+		room = nil,
+		suppressMouse = false, -- disables mouse-driven editing in love.update() when a click has triggered different action, reset on release
+		tool = "tile",
+		currentTile = 0,
+		message = nil,
+		messageTimeLeft = nil,
+		
+		-- history (undo stack)
+		history = {},
+		historyN = 0,
+	}
 
--- UI only stuff
-app = {
-	camX = 0,
-	camY = 0,
-	camScale = 3, --based on camScaleSetting
-	camScaleSetting = 2, -- 0, 1, 2 is 1x, 2x, 3x etc, -1, -2, -3 is 0.5x, 0.25x, 0.125x
-	room = nil,
-	suppressMouse = false, -- disables mouse-driven editing in love.update() when a click has triggered different action, reset on release
-	tool = "tile",
-	currentTile = 0,
-	message = nil,
-	messageTimeLeft = nil,
-	
-	-- history (undo stack)
-	history = {},
-	historyN = 0,
-}
-
-project = {
-	rooms = {},	
-	selection = nil,
-}
+	project = {
+		rooms = {},	
+		selection = nil,
+	}
+end
 
 function toScreen(x, y)
 	return (app.camX + x) * app.camScale,
@@ -138,6 +137,8 @@ function redo()
 end
 
 
+
+newProject()
 
 require 'fileio'
 require 'mainloop'
