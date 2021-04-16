@@ -19,21 +19,21 @@ function love.mousepressed(x, y, button, istouch, presses)
 				app.suppressMouse = true
 			end
 			
-			if app.room then
-				if love.keyboard.isDown("lalt") then
+			if love.keyboard.isDown("lalt") then
+				if app.room then
 					app.roomMoveX, app.roomMoveY = mx - activeRoom().x, my - activeRoom().y
 				end
-			end
-			
-			if app.tool == "select" then
-				if not project.selection then
-					local ti, tj = mouseOverTile()
-					if ti then
-						app.selectTileI, app.selectTileJ = ti, tj
+			else
+				if app.tool == "select" then
+					if not project.selection then
+						local ti, tj = mouseOverTile()
+						if ti then
+							app.selectTileI, app.selectTileJ = ti, tj
+						end
+					else
+						project.selectionMoveX, project.selectionMoveY = mx - project.selection.x, my - project.selection.y
+						project.selectionStartX, project.selectionStartY = project.selection.x, project.selection.y
 					end
-				else
-					project.selectionMoveX, project.selectionMoveY = mx - project.selection.x, my - project.selection.y
-					project.selectionStartX, project.selectionStartY = project.selection.x, project.selection.y
 				end
 			end
 		end
@@ -54,19 +54,8 @@ function love.mousereleased(x, y, button, istouch, presses)
 	if app.tool == "select" then
 		if app.selectTileI and ti then
 			placeSelection()
-		
-			local i0, j0, w, h = rectCont2Tiles(ti, tj, app.selectTileI, app.selectTileJ)
-			if w > 1 or h > 1 then
-				local r = activeRoom()
-				local selection = newRoom(r.x + i0*8, r.y + j0*8, w, h)
-				for i = 0, w - 1 do
-					for j = 0, h - 1 do
-						selection.data[i][j] = r.data[i0 + i][j0 + j]
-						r.data[i0 + i][j0 + j] = 0
-					end
-				end
-				project.selection = selection
-			end
+			
+			select(ti, tj, app.selectTileI, app.selectTileJ)
 		end
 		
 		if project.selection and project.selectionMoveX then

@@ -48,23 +48,6 @@ function closeToolMenu()
 	app.toolMenuX, app.toolMenuY = nil, nil
 end
 
-function placeSelection()
-	if project.selection and app.room then
-		local sel, room = project.selection, activeRoom()
-		local i0, j0 = div8(sel.x - room.x), div8(sel.y - room.y)
-		for i = 0, sel.w - 1 do
-			if i0 + i >= 0 and i0 + i < room.w then
-				for j = 0, sel.h - 1 do
-					if j0 + j >= 0 and j0 + j < room.h then
-						room.data[i0 + i][j0 + j] = sel.data[i][j]
-					end
-				end
-			end
-		end
-	end
-	project.selection = nil
-end
-
 
 
 -- MAIN LOOP

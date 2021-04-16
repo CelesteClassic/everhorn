@@ -1,6 +1,8 @@
 function love.keypressed(key, scancode, isrepeat)
 	ui:keypressed(key, scancode, isrepeat)
 	
+	-- handle actions that are allowed to repeat when holding key
+	
 	local dx, dy = 0, 0
 	if key == "left" then dx = -1 end
 	if key == "right" then dx = 1 end
@@ -25,6 +27,8 @@ function love.keypressed(key, scancode, isrepeat)
 	if isrepeat then
 		return
 	end
+	
+	-- then non-repeatable actions
 	
 	local x, y = love.mouse.getPosition()
 	local mx, my = fromScreen(x, y)
@@ -143,6 +147,7 @@ function love.keypressed(key, scancode, isrepeat)
 					showMessage("Copied")
 				end
 			end
+		-- Ctrl+V
 		elseif key == "v" then
 			placeSelection() -- to clean selection first
 			
@@ -172,6 +177,11 @@ function love.keypressed(key, scancode, isrepeat)
 			end
 			if err then
 				showMessage("Failed to paste (did you paste something you're not supposed to?)")
+			end
+		elseif key == "a" then
+			if activeRoom() then
+				app.tool = "select"
+				select(0, 0, activeRoom().w - 1, activeRoom().h - 1)
 			end
 		end
 	end
