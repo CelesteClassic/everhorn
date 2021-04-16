@@ -67,7 +67,7 @@ function love.keypressed(key, scancode, isrepeat)
 				if ext == "ahm" then
 					openOk = openMap(filename)
 				elseif ext == "p8" then
-					openOk = loadMapFromPico8(filename)
+					openOk = openPico8(filename)
 				end
 				
 				if openOk then

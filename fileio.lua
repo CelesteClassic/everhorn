@@ -72,28 +72,37 @@ function loadpico8(filename)
 	end
 	
 	data.rooms = {}
+	data.roomBounds = {}
 	
-	-- code: look for magic comments
+	-- code: look for the magic comment
 	local code = table.concat(sections["lua"])
-	-- levels
-	local levels_str = string.match(code, "%-%-@everhorn_levels([^@]+)%-%-@everhorn_end")
-	if levels_str then
-		print(levels_str)
-		local levels, err = loadlua(levels_str)
-		if err then error(err) end
-		
-		data.roomBounds = {}
-		for _, s in ipairs(levels) do
-			local x, y, w, h, title = string.match(s, "^([^,]+),([^,]+),([^,]+),([^,]+),([^,]+)$")
-			x, y, w, h = tonumber(x), tonumber(y), tonumber(w), tonumber(h)
-			if x and y and w and h then -- this confirms they're there and they're numbers
-				table.insert(data.roomBounds, {x=x*128, y=y*128, w=w*16, h=h*16})
-			end
+	local evh = string.match(code, "%-%-@everhorn_begin([^@]+)%-%-@everhorn_end")
+	local levels, mapdata
+	if evh then
+		print(evh)
+		local chunk, err = loadstring(evh)
+		if not err then
+			local t = {}
+			chunk = setfenv(chunk, t)
+			chunk()
+			
+			levels, mapdata = t.levels, t.mapdata
+			print(dumplua(levels))
+			print(dumplua(mapdata))
 		end
 	end
 	
-	if not data.roomBounds then
-		data.roomBounds = {}
+	if levels then
+		for n, s in pairs(levels) do
+			local x, y, w, h, title = string.match(s, "^([^,]*),([^,]*),([^,]*),([^,]*),?([^,]*)$")
+			x, y, w, h = tonumber(x), tonumber(y), tonumber(w), tonumber(h)
+			if x and y and w and h then -- this confirms they're there and they're numbers
+				data.roomBounds[n] = {x=x*128, y=y*128, w=w*16, h=h*16}
+			else
+				print("wat", s)
+			end
+		end
+	else
 		for I = 0, 7 do
 			for J = 0, 3 do
 				local b = {x = I*128, y = J*128, w = 16, h = 16}
@@ -102,14 +111,8 @@ function loadpico8(filename)
 		end
 	end
 	
-	-- mapdata
-	local mapdata_str = string.match(code, "%-%-@everhorn_mapdata([^@]+)%-%-@everhorn_end")
-	if mapdata_str then
-		print(mapdata_str)
-		local mapdata, err = loadlua(mapdata_str)
-		if err then error(err) end
-		
-		for n, levelstr in ipairs(mapdata) do
+	if mapdata then
+		for n, levelstr in pairs(mapdata) do
 			local b = data.roomBounds[n]
 			if b then
 				local room = newRoom(b.x, b.y, b.w, b.h)
@@ -121,7 +124,7 @@ function loadpico8(filename)
 				end
 				data.rooms[n] = room
 			end
-		end	
+		end
 	end
 	
 	-- fill rooms with no mapdata from p8 map
@@ -170,7 +173,7 @@ function saveMap(filename)
 	return true
 end
 
-function loadMapFromPico8(filename)
+function openPico8(filename)
 	local p8data = loadpico8(filename)
 	
 	newProject()
@@ -207,25 +210,26 @@ function updateCart(filename)
 		ln = ln + 1
 	end
 	
-	for j = 0, 31 do
-		local line = ""
-		for i = 0, 127 do
-			line = line .. tohex(map[i][j])
-		end
-		out[mapstart+j+1] = line
-	end
-	for j = 32, 63 do
-		local line = ""
-		for i = 0, 127 do
-			line = line .. tohex_swapnibbles(map[i][j])
-		end
-		out[gfxstart+(j-32)*2+65] = string.sub(line, 1, 128)
-		out[gfxstart+(j-32)*2+66] = string.sub(line, 129, 256)
-	end
+	-- no __map__ and __gfx__ rn
+	--for j = 0, 31 do
+		--local line = ""
+		--for i = 0, 127 do
+			--line = line .. tohex(map[i][j])
+		--end
+		--out[mapstart+j+1] = line
+	--end
+	--for j = 32, 63 do
+		--local line = ""
+		--for i = 0, 127 do
+			--line = line .. tohex_swapnibbles(map[i][j])
+		--end
+		--out[gfxstart+(j-32)*2+65] = string.sub(line, 1, 128)
+		--out[gfxstart+(j-32)*2+66] = string.sub(line, 129, 256)
+	--end
 	
 	-- code updates
 	for k = 1, #out do
-		if out[k] == "--@everhorn_levels" then
+		if out[k] == "--@everhorn_begin" then
 			while #out >= k+1 and out[k+1] ~= "--@everhorn_end" do
 				if #out >= k+1 then
 					table.remove(out, k+1)
@@ -234,13 +238,22 @@ function updateCart(filename)
 				end
 			end
 			
-			local value = {}
-			for i = 1, #project.rooms do
-				local room = project.rooms[i]
-				value[i] = string.format("%d,%d,%d,%d,(title)", room.x/128, room.y/128, room.w/16, room.h/16)
+			local levels, mapdata = {}, {}
+			for n = 1, #project.rooms do
+				local room = project.rooms[n]
+				levels[n] = string.format("%d,%d,%d,%d,(title)", room.x/128, room.y/128, room.w/16, room.h/16)
+				
+				local s = ""
+				for j = 0, room.h - 1 do
+					for i = 0, room.w - 1 do
+						s = s .. tohex(room.data[i][j])
+					end
+				end
+				mapdata[n] = s
 			end
 			
-			table.insert(out, k+1, dumplua(value))
+			table.insert(out, k+1, "levels = "..dumplua(levels))
+			table.insert(out, k+2, "mapdata = "..dumplua(mapdata))
 		end
 	end
 	
