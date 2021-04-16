@@ -45,7 +45,7 @@ function div8(x)
 end
 
 function dumplua(t)
-	return serpent.line(t, {compact = true, sparse = true, comment = false})
+	return serpent.line(t, {compact = true, comment = false})
 end
 
 function loadlua(s)

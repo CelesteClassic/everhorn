@@ -109,21 +109,39 @@ function love.keypressed(key, scancode, isrepeat)
 			end
 		-- Ctrl+X
 		elseif key == "x" then
-			if project.selection then
-				local s = dumplua {"selection", project.selection}
-				love.system.setClipboardText(s)
-				project.selection = nil
-				
-				showMessage("Cut")
+			if love.keyboard.isDown("lshift") then
+				-- cut entire room
+				if activeRoom() then
+					local s = dumplua {"room", activeRoom()}
+					love.system.setClipboardText(s)
+					table.remove(project.rooms, app.room)
+					app.room = nil
+					
+					showMessage("Cut room")
+				end
+			else
+				-- cut selection
+				if project.selection then
+					local s = dumplua {"selection", project.selection}
+					love.system.setClipboardText(s)
+					project.selection = nil
+					
+					showMessage("Cut")
+				end
 			end
 		-- Ctrl+C
 		elseif key == "c" then
-			if project.selection then
-				local s = dumplua {"selection", project.selection}
-				love.system.setClipboardText(s)
-				placeSelection()
+			if love.keyboard.isDown("lshift") then
 				
-				showMessage("Copied")
+			else
+				-- copy selection
+				if project.selection then
+					local s = dumplua {"selection", project.selection}
+					love.system.setClipboardText(s)
+					placeSelection()
+					
+					showMessage("Copied")
+				end
 			end
 		elseif key == "v" then
 			placeSelection() -- to clean selection first
@@ -139,6 +157,12 @@ function love.keypressed(key, scancode, isrepeat)
 						app.tool = "select"
 						
 						showMessage("Pasted")
+					elseif t[1] == "room" then
+						local r = t[2]
+						r.x = roundto8(mx - r.w*4)
+						r.y = roundto8(my - r.h*4)
+						table.insert(project.rooms, r)
+						app.room = #project.rooms
 					else
 						err = true
 					end
