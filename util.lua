@@ -1,5 +1,3 @@
-local serpent = require 'serpent'
-
 function tob2(s)
 	return tonumber(s, 16)
 end
