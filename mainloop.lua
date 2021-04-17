@@ -64,15 +64,41 @@ function love.load()
 end
 
 function love.update(dt)
+	app.W, app.H = love.graphics.getDimensions()
+
 	ui:frameBegin()
+	ui:stylePush {
+		window = {
+			spacing = {x = 1, y = 1},
+			padding = {x = 1, y = 1},
+		},
+	}
 	
+	-- room panel
+	if ui:windowBegin("Room Panel", app.W - rpw, 0, rpw, app.H, {"scrollbar"}) then
+		if ui:windowIsHovered() then
+			ui:windowSetFocus("Room Panel")
+		end
+		
+		ui:layoutRow("dynamic", 25, 1)
+		for n = 1, #project.rooms do
+			if ui:widgetIsMousePressed() then
+				if app.mousePresses == 2 then
+					app.renameRoom = project.rooms[n]
+					app.renameRoomVTable = {value = app.renameRoom.title}
+				end
+			end
+			if ui:selectable("["..n.."] "..project.rooms[n].title, n == app.room) then
+				app.room = n
+			end
+		end
+	end
+	ui:windowEnd()
+	
+	-- tool menu
 	if app.toolMenuX then
-		ui:stylePush {
-			window = {
-				spacing = {x = 1, y = 1},
-				padding = {x = 1, y = 1},
-			},
-		}
+		-- this is also hacky
+		local close = false
 		
 		if ui:windowBegin("Tool Panel", app.toolMenuX - 80, app.toolMenuY, 80, (25+1)*2+1) then
 			-- hacky ass shit
@@ -84,6 +110,11 @@ function love.update(dt)
 			ui:layoutRow("dynamic", 25, 1)
 			toolLabel("Brush", "brush")
 			toolLabel("Selection", "select")
+			
+			local x, y, w, h = ui:windowGetBounds()
+			if ui:inputIsMousePressed("left", x, y, w, h) then
+				close = true
+			end
 		end
 		ui:windowEnd()
 		
@@ -109,14 +140,46 @@ function love.update(dt)
 						app.autotile = k
 					end
 				end
+				
+				local x, y, w, h = ui:windowGetBounds()
+				if ui:inputIsMousePressed("left", x, y, w, h) then
+					close = true
+				end
 			end
 			ui:windowEnd()
 		end
 		
-		ui:stylePop()
-		
+		if close then
+			closeToolMenu()
+		end
 	end
 	
+	if app.renameRoom then
+		local room = app.renameRoom
+		
+		local w, h = 200, 88
+		if ui:windowBegin("Rename room", app.W/2 - w/2, app.H/2 - h/2, w, h, {"title", "border", "closable", "movable"}) then
+			ui:layoutRow("dynamic", 25, 1)
+			
+			local state, changed
+			ui:editFocus()
+			state, changed = ui:edit("simple", app.renameRoomVTable)
+			
+			if ui:button("OK") or app.enterPressed then
+				room.title = app.renameRoomVTable.value
+				app.renameRoom = nil
+			end
+		else
+			app.renameRoom = nil
+		end
+		ui:windowEnd()
+	end
+	
+	app.enterPressed = false
+	
+	app.anyWindowHovered = ui:windowIsAnyHovered()
+	
+	ui:stylePop()
 	ui:frameEnd()
 
 	if not app.suppressMouse and not love.keyboard.isDown("lalt") and (love.mouse.isDown(1) or love.mouse.isDown(2)) then
@@ -206,7 +269,6 @@ function love.draw()
 	local x, y = love.mouse.getPosition()
 	local mx, my = fromScreen(x, y)
 	
-	app.W, app.H = love.graphics.getDimensions()
 	love.graphics.translate(math.floor(app.camScale * app.camX),
 	                        math.floor(app.camScale * app.camY))
 	love.graphics.scale(app.camScale)

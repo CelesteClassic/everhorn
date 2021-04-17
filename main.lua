@@ -8,8 +8,11 @@ require 'autotiles'
 
 
 
--- global constants (only one so far lol)
-tms = 4 
+-- global constants
+tms = 4 -- tile menu scale
+rpw = 120 -- room panel width
+
+
 
 -- GLOBAL VARIABLES (im dirty like that)
 -- and stuff that has to do with them
@@ -34,6 +37,11 @@ function newProject()
 		historyN = 0,
 		
 		font = love.graphics.getFont(),
+		
+		-- these are used in various hacks to work around nuklear being big dumb (or me idk)
+		anyWindowHovered = false,
+		mousePresses = 1, -- for detecting double clicks
+		enterPressed = false,
 	}
 
 	-- this is what goes into history and (mostly) gets saved

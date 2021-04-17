@@ -1,5 +1,16 @@
 function love.keypressed(key, scancode, isrepeat)
-	ui:keypressed(key, scancode, isrepeat)
+	if key == "return" then
+		app.enterPressed = true
+	end
+	
+	if ui:keypressed(key, scancode, isrepeat) then
+		return
+	end
+	
+	-- another fucking hack: the shit above doesnt consume inputs when editing text for some fucking reason
+	if app.renameRoom then
+		return
+	end
 	
 	-- handle actions that are allowed to repeat when holding key
 	

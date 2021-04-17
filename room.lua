@@ -5,6 +5,7 @@ function newRoom(x, y, w, h)
 		w = w or 16,
 		h = h or 16,
 		data = {},
+		title = "",
 	}
 	room.data = fill2d0s(room.w, room.h)
 	

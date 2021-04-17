@@ -1,12 +1,14 @@
 function love.mousepressed(x, y, button, istouch, presses)
-	ui:mousepressed(x, y, button, istouch, presses)
+	-- this is for informing about double clicks
+	app.mousePresses = presses
+	
+	if ui:mousepressed(x, y, button, istouch, presses) then
+		return
+	end
 	
 	local mx, my = fromScreen(x, y)
 	if button == 1 then
-		if app.toolMenuX then
-			closeToolMenu()
-			app.suppressMouse = true
-		else
+		if not app.toolMenuX then
 			local oldActiveRoom = app.room
 			app.room = nil
 			for i, room in ipairs(project.rooms) do
@@ -48,7 +50,9 @@ function love.mousepressed(x, y, button, istouch, presses)
 end
 
 function love.mousereleased(x, y, button, istouch, presses)
-	ui:mousereleased(x, y, button, istouch, presses)
+	if ui:mousereleased(x, y, button, istouch, presses) then
+		return
+	end
 	
 	local ti, tj = mouseOverTile()
 	if app.tool == "select" then
@@ -77,7 +81,9 @@ function love.mousereleased(x, y, button, istouch, presses)
 end
 
 function love.mousemoved(x, y, dx, dy, istouch)
-	ui:mousemoved(x, y, dx, dy, istouch)
+	if ui:mousemoved(x, y, dx, dy, istouch) then
+		return
+	end
 	
 	local mx, my = fromScreen(x, y)
 	local ti, tj = div8(mx), div8(my)
@@ -96,7 +102,12 @@ function love.mousemoved(x, y, dx, dy, istouch)
 end
 
 function love.wheelmoved(x, y)
-	ui:wheelmoved(x, y)
+	-- this is an inelegant solution to the fact that some slut decided that scrollbars scroll even if the window isn't even hovered
+	if app.anyWindowHovered then
+		if ui:wheelmoved(x, y) then
+			return
+		end
+	end
 	
 	if y ~= 0 then
 		local mx, my = love.mouse.getPosition()
