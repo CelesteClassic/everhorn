@@ -27,7 +27,7 @@ function toolLabel(label, tool)
 	end
 	
 	if hov then
-		local bg = "#afafaf"
+		local bg = "#00ff88" --"#afafaf"
 		ui:rectMultiColor(x, y, w + 4, h, bg, bg, bg, bg)
 		color = "#2d2d2d"
 		ui:stylePush {
@@ -53,13 +53,13 @@ end
 -- MAIN LOOP
 
 function love.load()
-	love.graphics.setDefaultFilter("nearest", "nearest")
 	love.keyboard.setKeyRepeat(true)
 
 	ui = nuklear.newUI()
 	
-	p8data = loadpico8(love.filesystem.getSource().."\\celeste.p8")
+	--p8data = loadpico8(love.filesystem.getSource().."\\celeste.p8")
 	
+	newProject()
 	pushHistory()
 end
 
@@ -74,7 +74,7 @@ function love.update(dt)
 			},
 		}
 		
-		if ui:windowBegin("Tool Panel", app.toolMenuX - 80, app.toolMenuY, 80, 8*8*tms + 10) then
+		if ui:windowBegin("Tool Panel", app.toolMenuX - 80, app.toolMenuY, 80, (25+1)*2+1) then
 			-- hacky ass shit
 			-- nuklear wasnt made for this apparently
 			if ui:windowIsHovered() then

@@ -1,4 +1,6 @@
 function loadpico8(filename)
+	love.graphics.setDefaultFilter("nearest", "nearest")
+
 	local file, err = io.open(filename)
 
 	local data = {}
@@ -147,9 +149,10 @@ function loadpico8(filename)
 end
 
 function openPico8(filename)
-	local p8data = loadpico8(filename)
-	
 	newProject()
+	
+	-- loads into global p8data as well, for spritesheet
+	p8data = loadpico8(filename)	
 	project.rooms = p8data.rooms
 	
 	app.openFileName = filename
