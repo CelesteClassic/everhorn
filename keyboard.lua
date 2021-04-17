@@ -1,18 +1,12 @@
 function love.keypressed(key, scancode, isrepeat)
+	local x, y = love.mouse.getPosition()
+	local mx, my = fromScreen(x, y)
+
 	if key == "return" then
 		app.enterPressed = true
 	end
 	
-	if ui:keypressed(key, scancode, isrepeat) then
-		return
-	end
-	
-	-- another fucking hack: the shit above doesnt consume inputs when editing text for some fucking reason
-	if app.renameRoom then
-		return
-	end
-	
-	-- handle actions that are allowed to repeat when holding key
+	-- first handle actions that are allowed to repeat when holding key
 	
 	local dx, dy = 0, 0
 	if key == "left" then dx = -1 end
@@ -35,48 +29,29 @@ function love.keypressed(key, scancode, isrepeat)
 		end
 	end
 	
+	if (key == "down" or key == "up") and love.keyboard.isDown("lctrl") then
+		print("a")
+		if app.room then
+			local n1 = app.room
+			local n2 = key == "down" and app.room + 1 or app.room - 1
+			print(n1, n2)
+			if project.rooms[n1] and project.rooms[n2] then
+				local tmp = project.rooms[n1]
+				project.rooms[n1] = project.rooms[n2]
+				project.rooms[n2] = tmp
+				
+				app.room = n2
+			end
+		end
+	end
+	
 	if isrepeat then
 		return
 	end
 	
-	-- then non-repeatable actions
+	-- non-repeatable global shortcuts
 	
-	local x, y = love.mouse.getPosition()
-	local mx, my = fromScreen(x, y)
-	
-	if key == "n" then
-		local room = newRoom(roundto8(mx-64), roundto8(my-64), 16, 16)
-		table.insert(project.rooms, room)
-		app.room = #project.rooms
-	elseif key == "delete" and love.keyboard.isDown("lshift") then
-		if app.room then
-			table.remove(project.rooms, app.room)
-			if not activeRoom() then app.room = nil end
-		end
-	elseif key == "space" then
-		-- open tile menu
-		if app.toolMenuX then
-			app.toolMenuX, app.toolMenuY = nil, nil
-		else
-			if app.tool == "brush" then
-				if not app.autotile then
-					local i, j = app.currentTile%16, math.floor(app.currentTile/16)
-					app.toolMenuX = x - (i + 0.5)*8*tms - i - 1
-					app.toolMenuY = y - (j + 0.5)*8*tms - j - 1
-				elseif app.autotile then
-					local i = app.autotile - 1
-					app.toolMenuX = x - (i + 0.5)*8*tms - i - 1
-					app.toolMenuY = y - (8 + 0.5)*8*tms - 8 - 1 - 25
-				end
-			else
-				app.toolMenuX, app.toolMenuY = x, y
-			end
-		end
-	elseif key == "return" then
-		placeSelection()
-	elseif key == "tab" then
-		app.playtesting = not app.playtesting
-	elseif love.keyboard.isDown("lctrl") then
+	if love.keyboard.isDown("lctrl") then
 		-- Ctrl+O
 		if key == "o" then
 			local filename = filedialog.open()
@@ -139,7 +114,13 @@ function love.keypressed(key, scancode, isrepeat)
 		-- Ctrl+C
 		elseif key == "c" then
 			if love.keyboard.isDown("lshift") then
-				
+				-- copy entire room
+				if activeRoom() then
+					local s = dumplua {"room", activeRoom()}
+					love.system.setClipboardText(s)
+					
+					showMessage("Copied room")
+				end
 			else
 				-- copy selection
 				if project.selection then
@@ -187,18 +168,53 @@ function love.keypressed(key, scancode, isrepeat)
 				select(0, 0, activeRoom().w - 1, activeRoom().h - 1)
 			end
 		end
-	elseif (key == "down" or key == "up") and love.keyboard.isDown("lshift") then
+	end
+	
+	-- now pass to nuklear and return if consumed
+	
+	if ui:keypressed(key, scancode, isrepeat) then
+		return
+	end
+	
+	-- another fucking hack: the shit above doesnt consume inputs when editing text for some fucking reason
+	if app.renameRoom then
+		return
+	end
+	
+	-- now editing things (that shouldn't happen if you have a nuklear window focused or something)
+	
+	if key == "n" then
+		local room = newRoom(roundto8(mx-64), roundto8(my-64), 16, 16)
+		table.insert(project.rooms, room)
+		app.room = #project.rooms
+	elseif key == "delete" and love.keyboard.isDown("lshift") then
 		if app.room then
-			local n1 = app.room
-			local n2 = key == "down" and app.room + 1 or app.room - 1
-			if project.rooms[n1] and project.rooms[n2] then
-				local tmp = project.rooms[n1]
-				project.rooms[n1] = project.rooms[n2]
-				project.rooms[n2] = tmp
-				
-				app.room = n2
+			table.remove(project.rooms, app.room)
+			if not activeRoom() then app.room = nil end
+		end
+	elseif key == "space" then
+		-- open tile menu
+		if app.toolMenuX then
+			app.toolMenuX, app.toolMenuY = nil, nil
+		else
+			if app.tool == "brush" then
+				if not app.autotile then
+					local i, j = app.currentTile%16, math.floor(app.currentTile/16)
+					app.toolMenuX = x - (i + 0.5)*8*tms - i - 1
+					app.toolMenuY = y - (j + 0.5)*8*tms - j - 1
+				elseif app.autotile then
+					local i = app.autotile - 1
+					app.toolMenuX = x - (i + 0.5)*8*tms - i - 1
+					app.toolMenuY = y - (8 + 0.5)*8*tms - 8 - 1 - 25
+				end
+			else
+				app.toolMenuX, app.toolMenuY = x, y
 			end
 		end
+	elseif key == "return" then
+		placeSelection()
+	elseif key == "tab" then
+		app.playtesting = not app.playtesting
 	end
 end
 
