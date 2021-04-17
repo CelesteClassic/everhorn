@@ -187,6 +187,18 @@ function love.keypressed(key, scancode, isrepeat)
 				select(0, 0, activeRoom().w - 1, activeRoom().h - 1)
 			end
 		end
+	elseif (key == "down" or key == "up") and love.keyboard.isDown("lshift") then
+		if app.room then
+			local n1 = app.room
+			local n2 = key == "down" and app.room + 1 or app.room - 1
+			if project.rooms[n1] and project.rooms[n2] then
+				local tmp = project.rooms[n1]
+				project.rooms[n1] = project.rooms[n2]
+				project.rooms[n2] = tmp
+				
+				app.room = n2
+			end
+		end
 	end
 end
 

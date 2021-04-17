@@ -75,6 +75,7 @@ function love.update(dt)
 	}
 	
 	-- room panel
+	local rpw = app.W * 0.15
 	if ui:windowBegin("Room Panel", app.W - rpw, 0, rpw, app.H, {"scrollbar"}) then
 		if ui:windowIsHovered() then
 			ui:windowSetFocus("Room Panel")

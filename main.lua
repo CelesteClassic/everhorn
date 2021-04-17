@@ -10,7 +10,6 @@ require 'autotiles'
 
 -- global constants
 tms = 4 -- tile menu scale
-rpw = 120 -- room panel width
 
 
 

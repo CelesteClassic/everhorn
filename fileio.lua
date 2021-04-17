@@ -102,8 +102,8 @@ function loadpico8(filename)
 			end
 		end
 	else
-		for I = 0, 7 do
-			for J = 0, 3 do
+		for J = 0, 3 do
+			for I = 0, 7 do
 				local b = {x = I*128, y = J*128, w = 16, h = 16}
 				table.insert(data.roomBounds, b)
 			end
