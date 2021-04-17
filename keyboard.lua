@@ -46,7 +46,7 @@ function love.keypressed(key, scancode, isrepeat)
 		if app.toolMenuX then
 			app.toolMenuX, app.toolMenuY = nil, nil
 		else
-			if app.tool == "tile" then
+			if app.tool == "brush" then
 				local i, j = app.currentTile%16, math.floor(app.currentTile/16)
 				app.toolMenuX = x - (i + 0.5)*8*tms - i - 1
 				app.toolMenuY = y - (j + 0.5)*8*tms - j - 1
@@ -83,33 +83,16 @@ function love.keypressed(key, scancode, isrepeat)
 		-- Ctrl+S
 		elseif key == "s" then
 			local filename
-			if app.filename and not love.keyboard.isDown("lshift") then
-				filename = app.filename
+			if app.saveFileName and not love.keyboard.isDown("lshift") then
+				filename = app.saveFileName
 			else
 				filename = filedialog.save()
 			end
 			
-			if filename then
-				if saveMap(filename) then
-					showMessage("Saved "..string.match(filename, "\\([^\\]*)$"))
-				end
-			end
-		-- Ctrl+U
-		elseif key == "u" then
-			local filename
-			if app.cartfilename and not love.keyboard.isDown("lshift") then
-				filename = app.cartfilename
+			if filename and savePico8(filename) then
+				showMessage("Saved "..string.match(filename, "\\([^\\]*)$"))
 			else
-				filename = filedialog.open("*.p8\0*.p8\0")
-			end
-			app.cartfilename = filename
-			
-			if filename then
-				if updateCart(filename) then
-					showMessage("Updated "..string.match(filename, "\\([^\\]*)$"))
-				else
-					showMessage("Failed to update cart")
-				end
+				showMessage("Failed to save cart")
 			end
 		-- Ctrl+X
 		elseif key == "x" then

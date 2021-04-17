@@ -8,7 +8,7 @@ require 'room'
 -- global constants (only one so far lol)
 tms = 4 
 
--- GLOBAL VARIABLES
+-- GLOBAL VARIABLES (im dirty like that)
 -- and stuff that has to do with them
 
 function newProject()
@@ -19,7 +19,7 @@ function newProject()
 		camScaleSetting = 1, -- 0, 1, 2 is 1x, 2x, 3x etc, -1, -2, -3 is 0.5x, 0.25x, 0.125x
 		room = nil,
 		suppressMouse = false, -- disables mouse-driven editing in love.update() when a click has triggered different action, reset on release
-		tool = "tile",
+		tool = "brush",
 		currentTile = 0,
 		message = nil,
 		messageTimeLeft = nil,

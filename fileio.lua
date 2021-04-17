@@ -79,7 +79,6 @@ function loadpico8(filename)
 	local evh = string.match(code, "%-%-@everhorn_begin([^@]+)%-%-@everhorn_end")
 	local levels, mapdata
 	if evh then
-		print(evh)
 		local chunk, err = loadstring(evh)
 		if not err then
 			local t = {}
@@ -87,8 +86,6 @@ function loadpico8(filename)
 			chunk()
 			
 			levels, mapdata = t.levels, t.mapdata
-			print(dumplua(levels))
-			print(dumplua(mapdata))
 		end
 	end
 	
@@ -149,40 +146,18 @@ function loadpico8(filename)
 	return data
 end
 
-function openMap(filename)
-	local file = io.open(filename, "r")
-	local str = file:read("*a")
-	file:close()
-	
-	local p, err = loadlua(str)
-	if not err then
-		project = p
-		
-		app.filename = filename
-		return true
-	end
-end
-
-function saveMap(filename)
-	local file = io.open(filename, "w")
-	file:write(dumplua(project))
-	file:close()
-	
-	app.filename = filename
-	
-	return true
-end
-
 function openPico8(filename)
 	local p8data = loadpico8(filename)
 	
 	newProject()
 	project.rooms = p8data.rooms
 	
+	app.openFileName = filename
+	
 	return true
 end
 
-function updateCart(filename)
+function savePico8(filename)
 	local map = fill2d0s(128, 64)
 	
 	for _, room in ipairs(project.rooms) do
@@ -195,6 +170,13 @@ function updateCart(filename)
 	end
 	
 	local file = io.open(filename, "r")
+	if not file and app.openFileName then
+		file = io.open(app.openFileName, "r")
+	end
+	if not file then
+		return false
+	end
+	
 	local out = {}
 	
 	local ln = 1
@@ -258,9 +240,12 @@ function updateCart(filename)
 	end
 	
 	file:close()
+	
 	file = io.open(filename, "w")
 	file:write(table.concat(out, "\n"))
 	file:close()
+	
+	app.saveFileName = filename
 	
 	return true
 end

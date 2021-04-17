@@ -34,7 +34,7 @@ ffi.cdef [[
 	int GetSaveFileNameA(OPENFILENAMEA *lpofn);
 ]]
 
-function filedialog.open(filter)
+function filedialog.open()
 	local ofnptr = ffi.new("OPENFILENAMEA[1]")
 	local ofn = ofnptr[0]
 
@@ -45,7 +45,7 @@ function filedialog.open(filter)
 	ofn.nMaxFile = 32767
 
 	ofn.nFilterIndex = 1
-	ofn.lpstrFilter = filter or "*.ahm, *.p8\0*.ahm;*.p8\0"
+	ofn.lpstrFilter = "*.p8\0*.p8\0"
 	
 	ofn.lpstrTitle = nil
 	ofn.lpstrInitialDir = nil
@@ -68,7 +68,7 @@ function filedialog.save()
 	ofn.nMaxFile = 32767
 
 	ofn.nFilterIndex = 1
-	ofn.lpstrFilter = "*.ahm\0*.ahm\0"
+	ofn.lpstrFilter = "*.p8\0*.p8\0"
 	ofn.lpstrDefExt = "map"
 	
 	ofn.lpstrTitle = "Save"

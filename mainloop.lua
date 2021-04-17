@@ -23,7 +23,7 @@ function toolLabel(label, tool)
 	
 	local color = "#afafaf"
 	if tool == app.tool then
-		color = "#ffffff"
+		color = "#00ff88"
 	end
 	
 	if hov then
@@ -82,12 +82,12 @@ function love.update(dt)
 			end
 			
 			ui:layoutRow("dynamic", 25, 1)
-			toolLabel("Tileset", "tile")
+			toolLabel("Brush", "brush")
 			toolLabel("Selection", "select")
 		end
 		ui:windowEnd()
 		
-		if app.tool == "tile" then
+		if app.tool == "brush" then
 			if ui:windowBegin("Tileset", app.toolMenuX, app.toolMenuY, 16*8*tms + 18, 8*8*tms + 10) then
 				for j = 0, 7 do
 					ui:layoutRow("static", 8*tms, 8*tms, 16)
@@ -106,7 +106,7 @@ function love.update(dt)
 	ui:frameEnd()
 
 	if not app.suppressMouse and not love.keyboard.isDown("lalt") and (love.mouse.isDown(1) or love.mouse.isDown(2)) then
-		if app.tool == "tile" then
+		if app.tool == "brush" then
 			local n = app.currentTile
 			if love.mouse.isDown(2) then
 				n = 0
@@ -210,7 +210,7 @@ function love.draw()
 	
 	local ti, tj = mouseOverTile()
 	
-	if app.tool == "tile" then
+	if app.tool == "brush" then
 		if ti and not app.toolMenuX then
 			love.graphics.setColor(1, 1, 1)
 			love.graphics.draw(p8data.spritesheet, p8data.quads[app.currentTile], activeRoom().x + ti*8, activeRoom().y + tj*8)
