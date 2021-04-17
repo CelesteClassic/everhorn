@@ -63,6 +63,8 @@ function love.keypressed(key, scancode, isrepeat)
 		end
 	elseif key == "return" then
 		placeSelection()
+	elseif key == "tab" then
+		app.playtesting = not app.playtesting
 	elseif love.keyboard.isDown("lctrl") then
 		-- Ctrl+O
 		if key == "o" then

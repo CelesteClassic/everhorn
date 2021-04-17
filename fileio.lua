@@ -83,11 +83,11 @@ function loadpico8(filename)
 	if evh then
 		local chunk, err = loadstring(evh)
 		if not err then
-			local t = {}
-			chunk = setfenv(chunk, t)
+			local env = {}
+			chunk = setfenv(chunk, env)
 			chunk()
 			
-			levels, mapdata = t.levels, t.mapdata
+			levels, mapdata = env.levels, env.mapdata
 		end
 	end
 	
@@ -239,6 +239,9 @@ function savePico8(filename)
 			
 			table.insert(out, k+1, "levels = "..dumplua(levels))
 			table.insert(out, k+2, "mapdata = "..dumplua(mapdata))
+			if app.playtesting and app.room then
+				table.insert(out, k+3, "local __init = _init function _init() __init() begin_game() load_level("..app.room..") end")
+			end
 		end
 	end
 	

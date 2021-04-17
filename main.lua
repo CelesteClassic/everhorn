@@ -27,10 +27,13 @@ function newProject()
 		currentTile = 0,
 		message = nil,
 		messageTimeLeft = nil,
+		playtesting = false,
 		
 		-- history (undo stack)
 		history = {},
 		historyN = 0,
+		
+		font = love.graphics.getFont(),
 	}
 
 	-- this is what goes into history and (mostly) gets saved

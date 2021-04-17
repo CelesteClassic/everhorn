@@ -260,7 +260,12 @@ function love.draw()
 	love.graphics.setColor(1, 1, 1)
 	
 	if app.message then
-		love.graphics.print(app.message, 5, app.H - 18)
+		love.graphics.print(app.message, 5, app.H - app.font:getHeight() - 4)
+	end
+	
+	if app.playtesting then
+		local s = "[PLAYTESTING]"
+		love.graphics.print(s, app.W - app.font:getWidth(s) - 4, app.H - app.font:getHeight() - 4)
 	end
 	
 	ui:draw()
