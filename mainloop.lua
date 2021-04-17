@@ -4,8 +4,6 @@ function tileButton(n)
 	local x, y, w, h = ui:widgetBounds()
 	ui:image({p8data.spritesheet, p8data.quads[n]})
 	if ui:inputIsHovered(x, y, w, h) then
-		app.currentTile = n
-		
 		love.graphics.setLineWidth(1)
 		love.graphics.setColor(0, 1, 0.5)
 		x, y = x - 0.5, y - 0.5
@@ -14,6 +12,8 @@ function tileButton(n)
 		ui:line(x, y, x, y + h)
 		ui:line(x + w, y, x + w, y + h)
 		ui:line(x, y + h, x + w, y + h)
+		
+		return true
 	end
 end
 
@@ -88,11 +88,25 @@ function love.update(dt)
 		ui:windowEnd()
 		
 		if app.tool == "brush" then
-			if ui:windowBegin("Tileset", app.toolMenuX, app.toolMenuY, 16*8*tms + 18, 8*8*tms + 10) then
+			if ui:windowBegin("Tileset", app.toolMenuX, app.toolMenuY, 16*8*tms + 18, 9*(8*tms+1) + 25 + 2) then
 				for j = 0, 7 do
 					ui:layoutRow("static", 8*tms, 8*tms, 16)
 					for i = 0, 15 do
-						tileButton(i+j*16)
+						local n = i + j*16
+						if tileButton(n) then
+							app.currentTile = n
+						end
+					end
+				end
+				ui:layoutRow("dynamic", 25, 1)
+				ui:label("Autotiles:")
+				ui:layoutRow("static", 8*tms, 8*tms, #autotiles)
+				
+				app.autotile = false
+				for k, auto in ipairs(autotiles) do
+					if tileButton(auto[5]) then
+						app.currentTile = auto[15]
+						app.autotile = k
 					end
 				end
 			end
@@ -111,9 +125,20 @@ function love.update(dt)
 			if love.mouse.isDown(2) then
 				n = 0
 			end
+			
 			local ti, tj = mouseOverTile()
 			if ti then
+				local room = activeRoom()
+				
 				activeRoom().data[ti][tj] = n
+				
+				if app.autotile then
+					autotile(room, ti, tj)
+					autotile(room, ti + 1, tj)
+					autotile(room, ti - 1, tj)
+					autotile(room, ti, tj + 1)
+					autotile(room, ti, tj - 1)
+				end
 			end
 		end
 	end

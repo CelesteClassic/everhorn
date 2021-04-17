@@ -43,13 +43,20 @@ function love.keypressed(key, scancode, isrepeat)
 			if not activeRoom() then app.room = nil end
 		end
 	elseif key == "space" then
+		-- open tile menu
 		if app.toolMenuX then
 			app.toolMenuX, app.toolMenuY = nil, nil
 		else
 			if app.tool == "brush" then
-				local i, j = app.currentTile%16, math.floor(app.currentTile/16)
-				app.toolMenuX = x - (i + 0.5)*8*tms - i - 1
-				app.toolMenuY = y - (j + 0.5)*8*tms - j - 1
+				if not app.autotile then
+					local i, j = app.currentTile%16, math.floor(app.currentTile/16)
+					app.toolMenuX = x - (i + 0.5)*8*tms - i - 1
+					app.toolMenuY = y - (j + 0.5)*8*tms - j - 1
+				elseif app.autotile then
+					local i = app.autotile - 1
+					app.toolMenuX = x - (i + 0.5)*8*tms - i - 1
+					app.toolMenuY = y - (8 + 0.5)*8*tms - 8 - 1 - 25
+				end
 			else
 				app.toolMenuX, app.toolMenuY = x, y
 			end

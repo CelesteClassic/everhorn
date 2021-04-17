@@ -4,6 +4,9 @@ serpent = require 'serpent'
 
 require 'util'
 require 'room'
+require 'autotiles'
+
+
 
 -- global constants (only one so far lol)
 tms = 4 
