@@ -93,6 +93,11 @@ function love.update(dt)
                 app.room = n
             end
         end
+        
+        if app.roomAdded then
+			ui:windowSetScroll(0, 100000)
+			app.roomAdded = false
+		end
     end
     ui:windowEnd()
     

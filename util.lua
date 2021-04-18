@@ -56,3 +56,18 @@ function loadlua(s)
         return f()
     end
 end
+
+local alph_ = "abcdefghijklmnopqrstuvwxyz"
+local alph = {[0] = " "}
+for i = 1, 26 do
+	alph[i] = string.sub(alph_, i, i)
+end
+
+function b26(n)
+	local m, n = math.floor(n / 26), n % 26
+	if m > 0 then
+		return b26(m - 1) .. alph[n + 1]
+	else
+		return alph[n + 1]
+	end
+end

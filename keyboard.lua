@@ -183,8 +183,27 @@ function love.keypressed(key, scancode, isrepeat)
     
     if key == "n" then
         local room = newRoom(roundto8(mx-64), roundto8(my-64), 16, 16)
+        
+        -- generate alphabetic room title
+        local n, title = 0, nil
+        while true do
+			title = b26(n)
+			local exists = false
+			for _, otherRoom in ipairs(project.rooms) do
+				if otherRoom.title == title then
+					exists = true
+				end
+			end
+			if not exists then
+				break
+			end
+			n = n + 1
+		end
+		room.title = title
+        
         table.insert(project.rooms, room)
         app.room = #project.rooms
+        app.roomAdded = true
     elseif key == "delete" and love.keyboard.isDown("lshift") then
         if app.room then
             table.remove(project.rooms, app.room)

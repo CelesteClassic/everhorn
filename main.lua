@@ -41,6 +41,7 @@ function newProject()
         anyWindowHovered = false,
         mousePresses = 1, -- for detecting double clicks
         enterPressed = false,
+        roomAdded = false,
     }
 
     -- this is what goes into history and (mostly) gets saved
