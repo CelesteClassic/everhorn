@@ -99,7 +99,7 @@ function love.update(dt)
         -- this is also hacky
         local close = false
         
-        if ui:windowBegin("Tool Panel", app.toolMenuX - 80, app.toolMenuY, 80, (25+1)*2+1) then
+        if ui:windowBegin("Tool Panel", app.toolMenuX - 80, app.toolMenuY, 80, (25+1)*3+1) then
             -- hacky ass shit
             -- nuklear wasnt made for this apparently
             if ui:windowIsHovered() then
@@ -108,6 +108,7 @@ function love.update(dt)
             
             ui:layoutRow("dynamic", 25, 1)
             toolLabel("Brush", "brush")
+            toolLabel("Rectangle", "rectangle")
             toolLabel("Selection", "select")
             
             local x, y, w, h = ui:windowGetBounds()
@@ -117,7 +118,7 @@ function love.update(dt)
         end
         ui:windowEnd()
         
-        if app.tool == "brush" then
+        if app.tool == "brush" or app.tool == "rectangle" then
             if ui:windowBegin("Tileset", app.toolMenuX, app.toolMenuY, 16*8*tms + 18, 9*(8*tms+1) + 25 + 2) then
                 for j = 0, 7 do
                     ui:layoutRow("static", 8*tms, 8*tms, 16)
@@ -196,11 +197,7 @@ function love.update(dt)
                 activeRoom().data[ti][tj] = n
                 
                 if app.autotile then
-                    autotile(room, ti, tj)
-                    autotile(room, ti + 1, tj)
-                    autotile(room, ti - 1, tj)
-                    autotile(room, ti, tj + 1)
-                    autotile(room, ti, tj - 1)
+                    autotileWithNeighbors(activeRoom(), ti, tj)
                 end
             end
         end
@@ -297,7 +294,7 @@ function love.draw()
     
     local ti, tj = mouseOverTile()
     
-    if app.tool == "brush" then
+    if app.tool == "brush" or (app.tool == "rectangle" and not app.rectangleI) then
         if ti and not app.toolMenuX then
             love.graphics.setColor(1, 1, 1)
             love.graphics.draw(p8data.spritesheet, p8data.quads[app.currentTile], activeRoom().x + ti*8, activeRoom().y + tj*8)
@@ -307,9 +304,10 @@ function love.draw()
             love.graphics.rectangle("line", activeRoom().x + ti*8 + 0.5 / app.camScale, 
                                             activeRoom().y + tj*8 + 0.5 / app.camScale, 8, 8)
         end
-    elseif app.tool == "select" then
-        if app.selectTileI and ti then
-            local i, j, w, h = rectCont2Tiles(ti, tj, app.selectTileI, app.selectTileJ)
+    elseif (app.tool == "rectangle" and app.rectangleI) or app.tool == "select" then
+		local i1, j1 = app.rectangleI or app.selectTileI, app.rectangleJ or app.selectTileJ
+        if i1 and ti then
+            local i, j, w, h = rectCont2Tiles(ti, tj, i1, j1)
             love.graphics.setColor(0, 1, 0.5)
             love.graphics.setLineWidth(1 / app.camScale)
             love.graphics.rectangle("line", activeRoom().x + i*8 + 0.5 / app.camScale, 

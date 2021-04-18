@@ -45,7 +45,7 @@ autotiles = {
     },
 }
 
-local autotilet, autotilet_strict = {}, {}
+autotilet, autotilet_strict = {}, {}
 -- n => autotile n belongs to, if any
 -- strict excludes extra autotiles (>=16)
 
@@ -84,4 +84,12 @@ function autotile(room, i, j)
                  + b1(matches(isAutotile(room, i, j - 1), k)) * 8
         room.data[i][j] = autotiles[k][nb]
     end
+end
+
+function autotileWithNeighbors(room, i, j)
+	autotile(room, i, j)
+	autotile(room, i + 1, j)
+	autotile(room, i - 1, j)
+	autotile(room, i, j + 1)
+	autotile(room, i, j - 1)
 end
