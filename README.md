@@ -4,7 +4,7 @@ don't look here, it's not ready yet
 
 **Everhorn** is a map editor for Celeste Classic mods that use [evercore](https://github.com/CelesteClassic/evercore) or are based on it.
 
-![image](https://user-images.githubusercontent.com/25254726/115161532-f7f55d80-a0a6-11eb-959b-71c1a2e639a9.png)
+![image](https://user-images.githubusercontent.com/25254726/115166006-a1dde580-a0b9-11eb-8c04-fd1de72a8650.png)
 
 # Install
 
