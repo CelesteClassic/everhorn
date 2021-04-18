@@ -45,7 +45,7 @@ mapdata={
 * **Ctrl+Shift+C** - copy the entire room (it's text-based, so you can send it to someone directly).
 * **Alt+Left/Right Mouse Button** move and resize rooms.
 * **Up/Down, Ctrl+Up/Down** switch between rooms and reorder them.
-* **Space** opens/closes the tool menu. It's a bit unconventional, but snappy. Either click on the tool, or *hover over it*, then move to the right and click the tile you want to use. The tileset also includes 2 **autotiles**, which will automatically pick the right version of the tile based on it's neighbors. They are defined to match vanilla snow and ice.
+* **Space** opens/closes the tool menu. It's a bit unconventional, but snappy. Either click on the tool, or *hover over it*, then move to the right and click the tile you want to use. The tileset also includes 2 **autotiles**, which will automatically pick the right version of the tile based on it's neighbors. They are defined to match vanilla snow and ice (you can put any sprites instead, of course, and I can define more if needed).
 * * **Brush** - left click to paint with the tile, right click to erase (tile 0)
 * * **Rectangle** - same but in rectangles.
 * * **Select** - basic selection tool, click and drag to select a rectangle, then you can move it, place it, copy or cut it with **Ctrl+C**, **Ctrl+X** and paste with **Ctrl+V**.
