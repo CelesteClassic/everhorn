@@ -96,7 +96,7 @@ function loadpico8(filename)
             local x, y, w, h, title = string.match(s, "^([^,]*),([^,]*),([^,]*),([^,]*),?([^,]*)$")
             x, y, w, h = tonumber(x), tonumber(y), tonumber(w), tonumber(h)
             if x and y and w and h then -- this confirms they're there and they're numbers
-                data.roomBounds[n] = {x=x*128, y=y*128, w=w*16, h=h*16}
+                data.roomBounds[n] = {x=x*128, y=y*128, w=w*16, h=h*16, title=title}
             else
                 print("wat", s)
             end
@@ -104,7 +104,7 @@ function loadpico8(filename)
     else
         for J = 0, 3 do
             for I = 0, 7 do
-                local b = {x = I*128, y = J*128, w = 16, h = 16}
+                local b = {x = I*128, y = J*128, w = 16, h = 16, title=""}
                 table.insert(data.roomBounds, b)
             end
         end
@@ -121,6 +121,7 @@ function loadpico8(filename)
                         room.data[i][j] = fromhex(string.sub(levelstr, 1 + 2*k, 2 + 2*k))
                     end
                 end
+                room.title = b.title
                 data.rooms[n] = room
             end
         end

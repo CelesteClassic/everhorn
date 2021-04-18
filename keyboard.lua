@@ -221,19 +221,20 @@ function love.keypressed(key, scancode, isrepeat)
         if app.toolMenuX then
             app.toolMenuX, app.toolMenuY = nil, nil
         else
-            if app.tool == "brush" then
-                if not app.autotile then
-                    local i, j = app.currentTile%16, math.floor(app.currentTile/16)
-                    app.toolMenuX = x - (i + 0.5)*8*tms - i - 1
-                    app.toolMenuY = y - (j + 0.5)*8*tms - j - 1
-                elseif app.autotile then
-                    local i = app.autotile - 1
-                    app.toolMenuX = x - (i + 0.5)*8*tms - i - 1
-                    app.toolMenuY = y - (8 + 0.5)*8*tms - 8 - 1 - 25
-                end
-            else
-                app.toolMenuX, app.toolMenuY = x, y
-            end
+            --if app.tool == "brush" then
+                --if not app.autotile then
+                    --local i, j = app.currentTile%16, math.floor(app.currentTile/16)
+                    --app.toolMenuX = x - (i + 0.5)*8*tms - i - 1
+                    --app.toolMenuY = y - (j + 0.5)*8*tms - j - 1
+                --elseif app.autotile then
+                    --local i = app.autotile - 1
+                    --app.toolMenuX = x - (i + 0.5)*8*tms - i - 1
+                    --app.toolMenuY = y - (8 + 0.5)*8*tms - 8 - 1 - 25
+                --end
+            --else
+                --app.toolMenuX, app.toolMenuY = x, y
+            --end
+            app.toolMenuX, app.toolMenuY = x, y
         end
     elseif key == "return" then
         placeSelection()
@@ -243,15 +244,16 @@ function love.keypressed(key, scancode, isrepeat)
 end
 
 function love.keyreleased(key, scancode)
-	if ui:keyreleased(key, scancode) then
-		return
-	end
-
 	-- this shortcut is handled on release
+	-- so you don't input r into the field
     if key == "r" and activeRoom() then
 		app.renameRoom = activeRoom()
         app.renameRoomVTable = {value = app.renameRoom.title}
     end
+
+	if ui:keyreleased(key, scancode) then
+		return
+	end
     
     -- just save history every time a key is released lol
     pushHistory()
