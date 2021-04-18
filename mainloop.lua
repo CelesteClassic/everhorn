@@ -79,11 +79,7 @@ function love.update(dt)
     
     -- room panel
     local rpw = app.W * 0.15
-    if ui:windowBegin("Room Panel", app.W - rpw, 0, rpw, app.H, {"scrollbar"}) then
-        if ui:windowIsHovered() then
-            ui:windowSetFocus("Room Panel")
-        end
-        
+    if ui:windowBegin("Room Panel", app.W - rpw, 0, rpw + 1, app.H, {"scrollbar"}) then
         ui:layoutRow("dynamic", 25, 1)
         for n = 1, #project.rooms do
             if ui:selectable("["..n.."] "..project.rooms[n].title, n == app.room) then
@@ -154,6 +150,7 @@ function love.update(dt)
         
         if close then
             closeToolMenu()
+            app.suppressMouse = true
         end
     end
     
@@ -325,12 +322,12 @@ function love.draw()
     love.graphics.setColor(1, 1, 1)
     
     if app.message then
-        love.graphics.print(app.message, 5, app.H - app.font:getHeight() - 4)
+        love.graphics.print(app.message, 4, app.H - app.font:getHeight() - 4)
     end
     
     if app.playtesting then
         local s = "[PLAYTESTING]"
-        love.graphics.print(s, app.W - app.font:getWidth(s) - 4, app.H - app.font:getHeight() - 4)
+        love.graphics.print(s, 4, 4)
     end
     
     ui:draw()

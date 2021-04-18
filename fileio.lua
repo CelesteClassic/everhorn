@@ -226,7 +226,7 @@ function savePico8(filename)
             local levels, mapdata = {}, {}
             for n = 1, #project.rooms do
                 local room = project.rooms[n]
-                levels[n] = string.format("%d,%d,%d,%d,(title)", room.x/128, room.y/128, room.w/16, room.h/16)
+                levels[n] = string.format("%f,%f,%f,%f,%s", room.x/128, room.y/128, room.w/16, room.h/16, room.title)
                 
                 local s = ""
                 for j = 0, room.h - 1 do
