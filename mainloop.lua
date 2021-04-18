@@ -279,12 +279,15 @@ function love.draw()
     end
     
     for _, room in ipairs(project.rooms) do
-        drawRoom(room, p8data)
-        if room ~= activeRoom() then
+		if room ~= activeRoom() then
+			drawRoom(room, p8data)
             love.graphics.setColor(0.5, 0.5, 0.5, 0.4)
             love.graphics.rectangle("fill", room.x, room.y, room.w*8, room.h*8)
         end
     end
+    if activeRoom() then
+		drawRoom(activeRoom(), p8data)
+	end
     if project.selection then
         drawRoom(project.selection, p8data, true)
         love.graphics.setColor(0, 1, 0.5)
