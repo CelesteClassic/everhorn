@@ -77,10 +77,14 @@ function loadpico8(filename)
     data.roomBounds = {}
     
     -- code: look for the magic comment
-    local code = table.concat(sections["lua"])
-    local evh = string.match(code, "%-%-@everhorn_begin([^@]+)%-%-@everhorn_end")
+    local code = table.concat(sections["lua"], "\n")
+    local evh = string.match(code, "%-%-@begin([^@]+)%-%-@end")
     local levels, mapdata
     if evh then
+		-- cut out comments - loadstring doesn't parse them for some reason
+		evh = string.gsub(evh, "%-%-[^\n]*\n", "")
+		evh = string.gsub(evh, "//[^\n]*\n", "")
+		
         local chunk, err = loadstring(evh)
         if not err then
             local env = {}
@@ -215,8 +219,8 @@ function savePico8(filename)
     
     -- code updates
     for k = 1, #out do
-        if out[k] == "--@everhorn_begin" then
-            while #out >= k+1 and out[k+1] ~= "--@everhorn_end" do
+        if out[k] == "--@begin" then
+            while #out >= k+1 and out[k+1] ~= "--@end" do
                 if #out >= k+1 then
                     table.remove(out, k+1)
                 else
@@ -241,7 +245,7 @@ function savePico8(filename)
             table.insert(out, k+1, "levels = "..dumplua(levels))
             table.insert(out, k+2, "mapdata = "..dumplua(mapdata))
             if app.playtesting and app.room then
-                table.insert(out, k+3, "local __init = _init function _init() __init() begin_game() load_level("..app.room..") end")
+                table.insert(out, k+3, "local __init = _init function _init() __init() begin_game() load_level("..app.room..") music(-1) end")
             end
         end
     end

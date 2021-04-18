@@ -1,6 +1,7 @@
 function love.mousepressed(x, y, button, istouch, presses)
     
     if ui:mousepressed(x, y, button, istouch, presses) then
+		app.suppressMouse = true
         return
     end
     

@@ -244,16 +244,16 @@ function love.keypressed(key, scancode, isrepeat)
 end
 
 function love.keyreleased(key, scancode)
-	-- this shortcut is handled on release
+	if ui:keyreleased(key, scancode) then
+		return
+	end
+	
+	-- this shortcut is handled on release, and can be consumed
 	-- so you don't input r into the field
     if key == "r" and activeRoom() then
 		app.renameRoom = activeRoom()
         app.renameRoomVTable = {value = app.renameRoom.title}
     end
-
-	if ui:keyreleased(key, scancode) then
-		return
-	end
     
     -- just save history every time a key is released lol
     pushHistory()
