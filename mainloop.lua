@@ -72,6 +72,9 @@ function love.update(dt)
             spacing = {x = 1, y = 1},
             padding = {x = 1, y = 1},
         },
+        selectable = {
+			padding = {x = 0, y = 0},
+		}
     }
     
     -- room panel
@@ -83,12 +86,6 @@ function love.update(dt)
         
         ui:layoutRow("dynamic", 25, 1)
         for n = 1, #project.rooms do
-            if ui:widgetIsMousePressed() then
-                if app.mousePresses == 2 then
-                    app.renameRoom = project.rooms[n]
-                    app.renameRoomVTable = {value = app.renameRoom.title}
-                end
-            end
             if ui:selectable("["..n.."] "..project.rooms[n].title, n == app.room) then
                 app.room = n
             end

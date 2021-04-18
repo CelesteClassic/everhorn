@@ -1,6 +1,4 @@
 function love.mousepressed(x, y, button, istouch, presses)
-    -- this is for informing about double clicks
-    app.mousePresses = presses
     
     if ui:mousepressed(x, y, button, istouch, presses) then
         return
@@ -77,6 +75,7 @@ function love.mousereleased(x, y, button, istouch, presses)
     
     app.suppressMouse = false
     
+    -- just save history every time a mouse button is released lol
     pushHistory()
 end
 

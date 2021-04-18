@@ -29,14 +29,19 @@ function love.keypressed(key, scancode, isrepeat)
         end
     end
     
-    if (key == "down" or key == "up") and love.keyboard.isDown("lctrl") then
+    -- room switching / swapping
+    if key == "down" or key == "up" then
         if app.room then
             local n1 = app.room
             local n2 = key == "down" and app.room + 1 or app.room - 1
+            
             if project.rooms[n1] and project.rooms[n2] then
-                local tmp = project.rooms[n1]
-                project.rooms[n1] = project.rooms[n2]
-                project.rooms[n2] = tmp
+				if love.keyboard.isDown("lctrl") then
+					-- swap
+					local tmp = project.rooms[n1]
+					project.rooms[n1] = project.rooms[n2]
+					project.rooms[n2] = tmp
+				end
                 
                 app.room = n2
             end
@@ -207,7 +212,9 @@ function love.keypressed(key, scancode, isrepeat)
     elseif key == "delete" and love.keyboard.isDown("lshift") then
         if app.room then
             table.remove(project.rooms, app.room)
-            if not activeRoom() then app.room = nil end
+            if not activeRoom() then 
+				app.room = #project.rooms
+			end
         end
     elseif key == "space" then
         -- open tile menu
@@ -236,11 +243,17 @@ function love.keypressed(key, scancode, isrepeat)
 end
 
 function love.keyreleased(key, scancode)
-    ui:keyreleased(key, scancode)
+	if ui:keyreleased(key, scancode) then
+		return
+	end
+
+	-- this shortcut is handled on release
+    if key == "r" and activeRoom() then
+		app.renameRoom = activeRoom()
+        app.renameRoomVTable = {value = app.renameRoom.title}
+    end
     
-    local x, y = love.mouse.getPosition()
-    local mx, my = fromScreen(x, y)
-    
+    -- just save history every time a key is released lol
     pushHistory()
 end
 

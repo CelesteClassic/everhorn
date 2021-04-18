@@ -39,7 +39,6 @@ function newProject()
         
         -- these are used in various hacks to work around nuklear being big dumb (or me idk)
         anyWindowHovered = false,
-        mousePresses = 1, -- for detecting double clicks
         enterPressed = false,
         roomAdded = false,
     }
