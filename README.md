@@ -42,7 +42,7 @@ mapdata={
 * **N** - **create** new room.
 * **Alt+Left/Right Mouse Button** - **move** and **resize** rooms.
 * **Up/Down, Ctrl+Up/Down** - **switch** between rooms and **reorder** them (can also click to switch).
-* **R** - **rename** room. (I was told that in newleste.p8, room don't have titles; this will function as room options instead)
+* **R** - **rename** room. (I was told that in newleste.p8, room don't have titles; this will work as room options instead)
 * **Shift+Delete** - **delete** room.
 * **Ctrl+Shift+C** - **copy** the entire room (it's text-based, so you can send it to someone directly).
 * **Space** shows/hides the **tool panel** with the tools and the tileset. The tileset also includes 2 **autotiles**, which will automatically pick the right version of the tile based on it's neighbors. They are defined to match vanilla snow and ice (you can put any sprites instead, of course, and I can define more if needed).
