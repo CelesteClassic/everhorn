@@ -243,6 +243,9 @@ function love.keypressed(key, scancode, isrepeat)
 end
 
 function love.keyreleased(key, scancode)
+	-- just save history every time a key is released lol
+    pushHistory()
+
 	if ui:keyreleased(key, scancode) then
 		return
 	end
@@ -253,9 +256,6 @@ function love.keyreleased(key, scancode)
 		app.renameRoom = activeRoom()
         app.renameRoomVTable = {value = app.renameRoom.title}
     end
-    
-    -- just save history every time a key is released lol
-    pushHistory()
 end
 
 function love.textinput(text)
