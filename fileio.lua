@@ -39,7 +39,7 @@ function loadpico8(filename)
     
     local spritesheet_data = love.image.newImageData(128, 64)
     for j = 0, spritesheet_data:getHeight() - 1 do
-        local line = sections["gfx"][j + 1]
+        local line = sections["gfx"] and sections["gfx"][j + 1] or "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
         for i = 0, spritesheet_data:getWidth() - 1 do
             local s = string.sub(line, 1 + i, 1 + i)
             local b = fromhex(s)
@@ -61,13 +61,14 @@ function loadpico8(filename)
     for i = 0, 127  do
         data.map[i] = {}
         for j = 0, 31 do
-            local s = string.sub(sections["map"][j + 1], 1 + 2*i, 2 + 2*i)
+			local line = sections["map"] and sections["map"][j + 1] or "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+            local s = string.sub(line, 1 + 2*i, 2 + 2*i)
             data.map[i][j] = fromhex(s)
         end
         for j = 32, 63 do
             local i_ = i%64
             local j_ = i <= 63 and j*2 or j*2 + 1
-            local line = sections["gfx"][j_ + 1] or "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+            local line = sections["gfx"][j_ + 1] or "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
             local s = string.sub(line, 1 + 2*i_, 2 + 2*i_)
             data.map[i][j] = fromhex_swapnibbles(s)
         end
