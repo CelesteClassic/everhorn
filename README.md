@@ -12,6 +12,7 @@ Currently only 64-bit Windows is supported; it is possible to support Linux and 
 1. Install [love2d 11.*](https://love2d.org/) (use installer)
 2. Press the green Code button at the top of this page and download the .zip with the latest version, or clone the repository with git
 3. Double-click `everhorn.bat` to run it
+4. **Read the rest of this page**
 
 # How it works
 
