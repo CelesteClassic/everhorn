@@ -182,7 +182,9 @@ function savePico8(filename)
         local i0, j0 = div8(room.x), div8(room.y)
         for i = 0, room.w - 1 do
             for j = 0, room.h - 1 do
-                map[i0+i][j0+j] = room.data[i][j]
+				if map[i0+i] then
+					map[i0+i][j0+j] = room.data[i][j]
+				end
             end
         end
     end
