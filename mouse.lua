@@ -23,8 +23,10 @@ function love.mousepressed(x, y, button, istouch, presses)
                 end
                 return
             end
-                
-			if app.tool == "select" then
+            
+            if app.tool == "brush" then
+				app.brushing = true
+			elseif app.tool == "select" then
 				local ti, tj = mouseOverTile()
 				if not project.selection then
 					if ti then
@@ -42,6 +44,10 @@ function love.mousepressed(x, y, button, istouch, presses)
             app.roomResizeSideY = sign(my - activeRoom().y - activeRoom().h*8/2)
             return
         end
+        
+        if app.tool == "brush" then
+			app.brushing = true
+		end
     elseif button == 3 then
         app.camMoveX, app.camMoveY = fromScreen(x, y)
     end
@@ -110,6 +116,7 @@ function love.mousereleased(x, y, button, istouch, presses)
     app.camMoveX, app.camMoveY = nil, nil
     app.roomMoveX, app.roomMoveY = nil, nil
     app.roomResizeSideX, app.roomResizeSideY = nil, nil
+    app.brushing = false
     app.rectangleI, app.rectangleJ = nil, nil
     app.selectTileI, app.selectTileJ = nil, nil
     project.selectionMoveX, project.selectionMoveY = nil, nil

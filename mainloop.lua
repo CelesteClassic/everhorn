@@ -173,7 +173,7 @@ function love.update(dt)
     
     ui:frameEnd()
 
-    if not app.suppressMouse and not hov and not love.keyboard.isDown("lalt") and (love.mouse.isDown(1) or love.mouse.isDown(2)) then
+    if app.brushing and not hov and not love.keyboard.isDown("lalt") and (love.mouse.isDown(1) or love.mouse.isDown(2)) then
         if app.tool == "brush" then
             local n = app.currentTile
             if love.mouse.isDown(2) then
@@ -245,8 +245,6 @@ function love.update(dt)
             app.messageTimeLeft = nil
         end
     end
-    
-    app.suppressMouse = false
 end
 
 function love.draw()
