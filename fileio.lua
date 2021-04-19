@@ -96,10 +96,14 @@ function loadpico8(filename)
         end
     end
     
+    mapdata = mapdata or {}
+    
     -- flatten levels and mapdata
     local lvls = {}
-    for n, s in pairs(levels) do
-		table.insert(lvls, {n, s, mapdata[n]})
+    if levels then
+		for n, s in pairs(levels) do
+			table.insert(lvls, {n, s, mapdata[n]})
+		end
 	end
 	table.sort(lvls, function(p1, p2) return p1[1] < p2[1] end)
 	levels, mapdata = {}, {}
@@ -109,7 +113,7 @@ function loadpico8(filename)
 	end
     
     -- load levels
-    if levels then
+    if levels[1] then
         for n, s in pairs(levels) do
             local x, y, w, h, title = string.match(s, "^([^,]*),([^,]*),([^,]*),([^,]*),?([^,]*)$")
             x, y, w, h = tonumber(x), tonumber(y), tonumber(w), tonumber(h)
