@@ -11,6 +11,9 @@ function love.mousepressed(x, y, button, istouch, presses)
                 if mx >= room.x and mx <= room.x + room.w*8
                 and my >= room.y and my <= room.y + room.h*8 then
                     app.room = i
+                    if app.room == oldActiveRoom then
+						break
+					end
                 end
             end
             if app.room ~= oldActiveRoom then
