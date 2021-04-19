@@ -17,7 +17,7 @@ Currently only 64-bit Windows is supported, Linux and Mac are possible but only 
 
 # How it works
 
-Everhorn is a room-based editor, like Ahorn. To get started, you'll need a to get the [evercore](https://github.com/CelesteClassic/evercore) cart (Everhorn can open vanilla Celeste carts, but only in a very basic way, and can't save them). Next, you need to open up the code in it, find the place where `levels` and `mapdata` are defined and surround them in `--@begin` and `--@end` comments like this:
+Everhorn is a room-based editor, like Ahorn. It is able to open and save vanilla Celeste carts, splitting them into 16x16 rooms, but its true power is revealed when using [evercore](https://github.com/CelesteClassic/evercore). To get started with an *evercore*-based cart, you need to open up the code in it, find the place where `levels` and `mapdata` are defined and surround them in `--@begin` and `--@end` comments like this:
 
 ```lua
 --@begin
@@ -37,6 +37,7 @@ mapdata={
 
 * **Ctrl+O** - **Open** (loads rooms and the spritesheet).
 * **Ctrl+S**, **Ctrl+Shift+S** - **Save/Save As**. If file exists, only the code in the *everhorn section* will be updated. If you select a different file, a copy will be created based on the currently opened cart. So, if you need to move rooms from cart A to cart B (for example, to update the cart), open cart A, then save to cart B.
+* **Ctrl+R** - *reload* the spritesheet from the currently opened cart.
 * **Ctrl+Z**, **Ctrl+Shift+Z** - **Undo/Redo**. Can undo pretty much anything (including something like deleting a room).
 * **Middle click** pans camera, **Scroll** zooms in/out.
 * **N** - **create** new room.
