@@ -187,7 +187,7 @@ function love.keypressed(key, scancode, isrepeat)
     -- now editing things (that shouldn't happen if you have a nuklear window focused or something)
     
     if key == "n" then
-        local room = newRoom(roundto8(mx-64), roundto8(my-64), 16, 16)
+        local room = newRoom(roundto8(mx), roundto8(my), 16, 16)
         
         -- disabled that shit
         -- generate alphabetic room title
