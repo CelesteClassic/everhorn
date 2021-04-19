@@ -30,6 +30,7 @@ function newProject()
         message = nil,
         messageTimeLeft = nil,
         playtesting = false,
+        showToolPanel = true,
         
         -- history (undo stack)
         history = {},
@@ -37,10 +38,13 @@ function newProject()
         
         font = love.graphics.getFont(),
         
+        left = 0, top = 0, -- top left corner of editing area
+        
         -- these are used in various hacks to work around nuklear being big dumb (or me idk)
         anyWindowHovered = false,
         enterPressed = false,
         roomAdded = false,
+        
     }
 
     -- this is what goes into history and (mostly) gets saved
@@ -65,21 +69,21 @@ function newProject()
 end
 
 function toScreen(x, y)
-    return (app.camX + x) * app.camScale,
-           (app.camY + y) * app.camScale
+    return (app.camX + x) * app.camScale + app.left,
+           (app.camY + y) * app.camScale + app.top
 end
  
 function fromScreen(x, y)
-    return x/app.camScale - app.camX,
-           y/app.camScale - app.camY
+    return (x - app.left)/app.camScale - app.camX,
+           (y - app.top)/app.camScale - app.camY
 end
 
 function activeRoom()
-    return project.rooms[app.room]
+    return app.room and project.rooms[app.room]
 end
 
 function mouseOverTile()
-    if app.room then
+    if activeRoom() then
         local x, y = love.mouse.getPosition()
         local mx, my = fromScreen(x, y)
         local ti, tj = div8(mx - activeRoom().x), div8(my - activeRoom().y)

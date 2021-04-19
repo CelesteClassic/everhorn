@@ -189,22 +189,24 @@ function love.keypressed(key, scancode, isrepeat)
     if key == "n" then
         local room = newRoom(roundto8(mx-64), roundto8(my-64), 16, 16)
         
+        -- disabled that shit
         -- generate alphabetic room title
-        local n, title = 0, nil
-        while true do
-			title = b26(n)
-			local exists = false
-			for _, otherRoom in ipairs(project.rooms) do
-				if otherRoom.title == title then
-					exists = true
-				end
-			end
-			if not exists then
-				break
-			end
-			n = n + 1
-		end
-		room.title = title
+        --local n, title = 0, nil
+        --while true do
+			--title = b26(n)
+			--local exists = false
+			--for _, otherRoom in ipairs(project.rooms) do
+				--if otherRoom.title == title then
+					--exists = true
+				--end
+			--end
+			--if not exists then
+				--break
+			--end
+			--n = n + 1
+		--end
+		--room.title = title
+		room.title = ""
         
         table.insert(project.rooms, room)
         app.room = #project.rooms
@@ -217,25 +219,7 @@ function love.keypressed(key, scancode, isrepeat)
 			end
         end
     elseif key == "space" then
-        -- open tile menu
-        if app.toolMenuX then
-            app.toolMenuX, app.toolMenuY = nil, nil
-        else
-            --if app.tool == "brush" then
-                --if not app.autotile then
-                    --local i, j = app.currentTile%16, math.floor(app.currentTile/16)
-                    --app.toolMenuX = x - (i + 0.5)*8*tms - i - 1
-                    --app.toolMenuY = y - (j + 0.5)*8*tms - j - 1
-                --elseif app.autotile then
-                    --local i = app.autotile - 1
-                    --app.toolMenuX = x - (i + 0.5)*8*tms - i - 1
-                    --app.toolMenuY = y - (8 + 0.5)*8*tms - 8 - 1 - 25
-                --end
-            --else
-                --app.toolMenuX, app.toolMenuY = x, y
-            --end
-            app.toolMenuX, app.toolMenuY = x, y
-        end
+        app.showToolPanel = not app.showToolPanel
     elseif key == "return" then
         placeSelection()
     elseif key == "tab" then

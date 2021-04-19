@@ -3,18 +3,28 @@
 function tileButton(n)
     local x, y, w, h = ui:widgetBounds()
     ui:image({p8data.spritesheet, p8data.quads[n]})
+    
+    local hov = false
     if ui:inputIsHovered(x, y, w, h) then
-        love.graphics.setLineWidth(1)
-        love.graphics.setColor(0, 1, 0.5)
+        hov = true
+    end
+    if hov or app.currentTile == n then
+		love.graphics.setLineWidth(1)
+        if hov then
+			love.graphics.setColor(0, 1, 0.5)
+		else
+			love.graphics.setColor(1, 1, 1)
+		end
         x, y = x - 0.5, y - 0.5
         w, h = w + 1, h + 1
         ui:line(x, y, x + w, y)
         ui:line(x, y, x, y + h)
         ui:line(x + w, y, x + w, y + h)
         ui:line(x, y + h, x + w, y + h)
-        
-        return true
     end
+    if ui:inputIsMousePressed("left", x, y, w, h) then
+		return true
+	end
 end
 
 function toolLabel(label, tool)
@@ -65,6 +75,8 @@ end
 
 function love.update(dt)
     app.W, app.H = love.graphics.getDimensions()
+    local rpw = app.W * 0.15 -- room panel width
+    app.left, app.top = rpw, 0
 
     ui:frameBegin()
     ui:stylePush {
@@ -74,12 +86,14 @@ function love.update(dt)
         },
         selectable = {
 			padding = {x = 0, y = 0},
+			["normal active"] = "#000000",
+			["hover active"] = "#000000",
+			["pressed active"] = "#000000",
 		}
     }
     
     -- room panel
-    local rpw = app.W * 0.15
-    if ui:windowBegin("Room Panel", app.W - rpw, 0, rpw + 1, app.H, {"scrollbar"}) then
+    if ui:windowBegin("Room Panel", 0, 0, rpw, app.H, {"scrollbar"}) then
         ui:layoutRow("dynamic", 25, 1)
         for n = 1, #project.rooms do
             if ui:selectable("["..n.."] "..project.rooms[n].title, n == app.room) then
@@ -94,66 +108,39 @@ function love.update(dt)
     end
     ui:windowEnd()
     
-    -- tool menu
-    if app.toolMenuX then
-        -- this is also hacky
-        local close = false
-        
-        if ui:windowBegin("Tool Panel", app.toolMenuX - 80, app.toolMenuY, 80, (25+1)*3+1) then
-            -- hacky ass shit
-            -- nuklear wasnt made for this apparently
-            if ui:windowIsHovered() then
-                ui:windowSetFocus("Tool Panel")
-            end
-            
-            ui:layoutRow("dynamic", 25, 1)
-            toolLabel("Brush", "brush")
-            toolLabel("Rectangle", "rectangle")
-            toolLabel("Selection", "select")
-            
-            local x, y, w, h = ui:windowGetBounds()
-            if ui:inputIsMousePressed("left", x, y, w, h) then
-                close = true
-            end
-        end
-        ui:windowEnd()
-        
-        if app.tool == "brush" or app.tool == "rectangle" then
-            if ui:windowBegin("Tileset", app.toolMenuX, app.toolMenuY, 16*8*tms + 18, 9*(8*tms+1) + 25 + 2) then
-                for j = 0, 7 do
-                    ui:layoutRow("static", 8*tms, 8*tms, 16)
-                    for i = 0, 15 do
-                        local n = i + j*16
-                        if tileButton(n) then
-                            app.currentTile = n
-                        end
-                    end
-                end
-                ui:layoutRow("dynamic", 25, 1)
-                ui:label("Autotiles:")
-                ui:layoutRow("static", 8*tms, 8*tms, #autotiles)
-                
-                app.autotile = false
-                for k, auto in ipairs(autotiles) do
-                    if tileButton(auto[5]) then
-                        app.currentTile = auto[15]
-                        app.autotile = k
-                    end
-                end
-                
-                local x, y, w, h = ui:windowGetBounds()
-                if ui:inputIsMousePressed("left", x, y, w, h) then
-                    close = true
-                end
-            end
-            ui:windowEnd()
-        end
-        
-        if close then
-            closeToolMenu()
-            app.suppressMouse = true
-        end
-    end
+    -- tool panel
+    if app.showToolPanel then
+		local tpw = 16*8*tms + 18, 9*(8*tms+1) + 25 + 2
+		if ui:windowBegin("Tool panel", app.W - tpw, 0, tpw, app.H) then
+			ui:layoutRow("static", 25, 100, 2)
+			if ui:selectable("Brush", app.tool == "brush") then app.tool = "brush" end
+			if ui:selectable("Rectangle", app.tool == "rectangle") then app.tool = "rectangle" end
+			ui:layoutRow("static", 25, 100, 1)
+			if ui:selectable("Select", app.tool == "select") then app.tool = "select" end
+			
+			for j = 0, 7 do
+				ui:layoutRow("static", 8*tms, 8*tms, 16)
+				for i = 0, 15 do
+					local n = i + j*16
+					if tileButton(n) then
+						app.currentTile = n
+						app.autotile = nil
+					end
+				end
+			end
+			
+			ui:layoutRow("dynamic", 25, 1)
+            ui:label("Autotiles:")
+            ui:layoutRow("static", 8*tms, 8*tms, #autotiles)
+			for k, auto in ipairs(autotiles) do
+				if tileButton(auto[5]) then
+					app.currentTile = auto[15]
+					app.autotile = k
+				end
+			end
+		end
+		ui:windowEnd()
+	end
     
     if app.renameRoom then
         local room = app.renameRoom
@@ -181,9 +168,12 @@ function love.update(dt)
     app.anyWindowHovered = ui:windowIsAnyHovered()
     
     ui:stylePop()
+    
+    local hov = ui:windowIsAnyHovered()
+    
     ui:frameEnd()
 
-    if not app.suppressMouse and not love.keyboard.isDown("lalt") and (love.mouse.isDown(1) or love.mouse.isDown(2)) then
+    if not app.suppressMouse and not hov and not love.keyboard.isDown("lalt") and (love.mouse.isDown(1) or love.mouse.isDown(2)) then
         if app.tool == "brush" then
             local n = app.currentTile
             if love.mouse.isDown(2) then
@@ -255,6 +245,8 @@ function love.update(dt)
             app.messageTimeLeft = nil
         end
     end
+    
+    app.suppressMouse = false
 end
 
 function love.draw()
@@ -266,8 +258,8 @@ function love.draw()
     local x, y = love.mouse.getPosition()
     local mx, my = fromScreen(x, y)
     
-    love.graphics.translate(math.floor(app.camScale * app.camX),
-                            math.floor(app.camScale * app.camY))
+    local ox, oy = toScreen(0, 0)
+    love.graphics.translate(math.floor(ox), math.floor(oy))
     love.graphics.scale(app.camScale)
     
     love.graphics.setColor(0.28, 0.28, 0.28)
