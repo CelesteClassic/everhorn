@@ -75,7 +75,7 @@ end
 
 function love.update(dt)
     app.W, app.H = love.graphics.getDimensions()
-    local rpw = app.W * 0.15 -- room panel width
+    local rpw = app.W * 0.10 -- room panel width
     app.left, app.top = rpw, 0
 
     ui:frameBegin()
