@@ -45,8 +45,8 @@ mapdata={
 * **R** - **rename** room. (I was told that in newleste.p8, room don't have titles; this will work as room options instead)
 * **Shift+Delete** - **delete** room.
 * **Ctrl+Shift+C** - **copy** the entire room (it's text-based, so you can send it to someone directly).
-* **Space** shows/hides the **tool panel** with the tools and the tileset. The tileset also includes 2 **autotiles**, which will automatically pick the right version of the tile based on it's neighbors. They are defined to match vanilla snow and ice (you can put any sprites instead, of course, and I can define more if needed).
-* * **Brush** - left click to paint with the tile, right click to erase (tile 0)
+* **Space** shows/hides the **tool panel** with the tools and the tileset. The tileset also includes 2 **autotiles**, which will automatically pick the right version of the tile based on it's neighbors, both when drawing and erasing. They are defined to match vanilla snow and ice (you can put any sprites instead, of course, and I can define more if needed).
+* * **Brush** - **left click** to paint with the tile, **right click** to erase (tile 0)
 * * **Rectangle** - same but in rectangles.
 * * **Select** - basic selection tool, click and drag to select a rectangle, then you can move it, place it, copy or cut it with **Ctrl+C**, **Ctrl+X** and paste with **Ctrl+V**.
 * **Tab** toggles **playtesting mode**. When it's enabled, saving a cart will also inject a line of code that spawns you right in the current room and disables music. (conveniently, in PICO-8 you can press **Ctrl+R** to restart the cart and it will reload the map as well!). Disabling the mode and saving will remove it.
