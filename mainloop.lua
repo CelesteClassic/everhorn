@@ -1,6 +1,6 @@
 -- UI things
 
-function tileButton(n)
+function tileButton(n, highlight)
     local x, y, w, h = ui:widgetBounds()
     ui:image({p8data.spritesheet, p8data.quads[n]})
     
@@ -8,7 +8,7 @@ function tileButton(n)
     if ui:inputIsHovered(x, y, w, h) then
         hov = true
     end
-    if hov or app.currentTile == n then
+    if hov or highlight then
 		love.graphics.setLineWidth(1)
         if hov then
 			love.graphics.setColor(0, 1, 0.5)
@@ -122,7 +122,7 @@ function love.update(dt)
 				ui:layoutRow("static", 8*tms, 8*tms, 16)
 				for i = 0, 15 do
 					local n = i + j*16
-					if tileButton(n) then
+					if tileButton(n, app.currentTile == n and not app.autotile) then
 						app.currentTile = n
 						app.autotile = nil
 					end
@@ -133,7 +133,7 @@ function love.update(dt)
             ui:label("Autotiles:")
             ui:layoutRow("static", 8*tms, 8*tms, #autotiles)
 			for k, auto in ipairs(autotiles) do
-				if tileButton(auto[5]) then
+				if tileButton(auto[5], app.currentTile == auto[15] and app.autotile) then
 					app.currentTile = auto[15]
 					app.autotile = k
 				end
