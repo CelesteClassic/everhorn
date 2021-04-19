@@ -313,6 +313,7 @@ function love.draw()
     
     love.graphics.reset()
     love.graphics.setColor(1, 1, 1)
+    love.graphics.translate(app.left, app.top)
     
     if app.message then
         love.graphics.print(app.message, 4, app.H - app.font:getHeight() - 4)
