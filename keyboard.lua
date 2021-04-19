@@ -178,6 +178,15 @@ function love.keypressed(key, scancode, isrepeat)
                 select(0, 0, activeRoom().w - 1, activeRoom().h - 1)
             end
         end
+    else -- if ctrl is not down
+		if key == "delete" and love.keyboard.isDown("lshift") then
+			if app.room then
+				table.remove(project.rooms, app.room)
+				if not activeRoom() then
+					app.room = #project.rooms
+				end
+			end
+        end
     end
     
     -- now pass to nuklear and return if consumed
@@ -218,13 +227,6 @@ function love.keypressed(key, scancode, isrepeat)
         table.insert(project.rooms, room)
         app.room = #project.rooms
         app.roomAdded = true
-    elseif key == "delete" and love.keyboard.isDown("lshift") then
-        if app.room then
-            table.remove(project.rooms, app.room)
-            if not activeRoom() then 
-				app.room = #project.rooms
-			end
-        end
     elseif key == "space" then
         app.showToolPanel = not app.showToolPanel
     elseif key == "return" then
