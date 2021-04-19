@@ -7,7 +7,7 @@
 
 # How it works
 
-Everhorn is a room-based editor, like Ahorn. While it is able to open and save vanilla Celeste carts, splitting them into 16x16 rooms, its true power is revealed when using [evercore](https://github.com/CelesteClassic/evercore). To get started with an *evercore*-based cart, you need to open up the code in it, find the place where `levels` and `mapdata` are defined and surround them in `--@begin` and `--@end` comments like this:
+Everhorn is a room-based editor, like Ahorn. While it is able to open and save vanilla Celeste carts, splitting them into 16x16 rooms, its true power is revealed when using [evercore](https://github.com/CelesteClassic/evercore), which is able load maps from variables `levels` and `mapdata`, located in the second code tab. To get started with an *evercore*-based cart, you need to open up the code in it, find the place where `levels` and `mapdata` are defined and surround them in `--@begin` and `--@end` comments like this:
 
 ```lua
 --@begin
