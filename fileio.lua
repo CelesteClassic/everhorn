@@ -96,6 +96,19 @@ function loadpico8(filename)
         end
     end
     
+    -- flatten levels and mapdata
+    local lvls = {}
+    for n, s in pairs(levels) do
+		table.insert(lvls, {n, s, mapdata[n]})
+	end
+	table.sort(lvls, function(p1, p2) return p1[1] < p2[1] end)
+	levels, mapdata = {}, {}
+	for n, p in pairs(lvls) do
+		levels[n] = p[2]
+		mapdata[n] = p[3]
+	end
+    
+    -- load levels
     if levels then
         for n, s in pairs(levels) do
             local x, y, w, h, title = string.match(s, "^([^,]*),([^,]*),([^,]*),([^,]*),?([^,]*)$")
@@ -115,6 +128,7 @@ function loadpico8(filename)
         end
     end
     
+    -- load mapdata
     if mapdata then
         for n, levelstr in pairs(mapdata) do
             local b = data.roomBounds[n]
