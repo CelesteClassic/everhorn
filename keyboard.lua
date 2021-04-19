@@ -58,9 +58,8 @@ function love.keypressed(key, scancode, isrepeat)
         -- Ctrl+O
         if key == "o" then
             local filename = filedialog.open()
+            local openOk = false
             if filename then
-                local openOk = false
-                
                 local ext = string.match(filename, ".(%w+)$")
                 if ext == "ahm" then
                     openOk = openMap(filename)
@@ -69,15 +68,23 @@ function love.keypressed(key, scancode, isrepeat)
                 end
                 
                 if openOk then
-                    showMessage("Opened "..string.match(filename, "\\([^\\]*)$"))
-                else
-                    showMessage("Failed to open file")
-                end
-                
-                app.history = {}
-                app.historyN = 0
-                pushHistory()
+					app.history = {}
+					app.historyN = 0
+					pushHistory()
+				end
             end
+            if openOk then
+				showMessage("Opened "..string.match(filename, "\\([^\\]*)$"))
+			else
+				showMessage("Failed to open file")
+			end
+		-- Ctrl+R
+        elseif key == "r" then
+			if app.openFileName then
+				local data = loadpico8(app.openFileName)
+				p8data.spritesheet = data.spritesheet
+				showMessage("Reloaded")
+			end
         -- Ctrl+S
         elseif key == "s" then
             local filename
@@ -234,7 +241,7 @@ function love.keyreleased(key, scancode)
 	
 	-- this shortcut is handled on release, and can be consumed
 	-- so you don't input r into the field
-    if key == "r" and activeRoom() then
+    if key == "r" and not love.keyboard.isDown("lctrl") and activeRoom() then
 		app.renameRoom = activeRoom()
         app.renameRoomVTable = {value = app.renameRoom.title}
     end

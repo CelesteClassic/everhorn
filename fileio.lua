@@ -186,36 +186,17 @@ function savePico8(filename)
     local ln = 1
     local gfxstart, mapstart
     for line in file:lines() do
-        if line == "__gfx__" then
-            gfxstart = ln
-        elseif line == "__map__" then
-            mapstart = ln
-        end
-        
         table.insert(out, line)
         ln = ln + 1
     end
     
-    -- no __map__ and __gfx__ rn
-    --for j = 0, 31 do
-        --local line = ""
-        --for i = 0, 127 do
-            --line = line .. tohex(map[i][j])
-        --end
-        --out[mapstart+j+1] = line
-    --end
-    --for j = 32, 63 do
-        --local line = ""
-        --for i = 0, 127 do
-            --line = line .. tohex_swapnibbles(map[i][j])
-        --end
-        --out[gfxstart+(j-32)*2+65] = string.sub(line, 1, 128)
-        --out[gfxstart+(j-32)*2+66] = string.sub(line, 129, 256)
-    --end
-    
     -- code updates
+    local evh_found = false
+    
     for k = 1, #out do
         if out[k] == "--@begin" then
+			evh_found = true
+			
             while #out >= k+1 and out[k+1] ~= "--@end" do
                 if #out >= k+1 then
                     table.remove(out, k+1)
@@ -239,6 +220,37 @@ function savePico8(filename)
             end
         end
     end
+    
+    -- map section
+    if not evh_found then
+		local gfxstart, mapstart
+		for k = 1, #out do
+			if out[k] == "__gfx__" then
+				gfxstart = k
+			elseif out[k] == "__map__" then
+				mapstart = k
+			end
+		end
+		if not (mapstart and gfxstart) then
+			error("uuuh")
+		end
+		
+		for j = 0, 31 do
+			local line = ""
+			for i = 0, 127 do
+				line = line .. tohex(map[i][j])
+			end
+			out[mapstart+j+1] = line
+		end
+		for j = 32, 63 do
+			local line = ""
+			for i = 0, 127 do
+				line = line .. tohex_swapnibbles(map[i][j])
+			end
+			out[gfxstart+(j-32)*2+65] = string.sub(line, 1, 128)
+			out[gfxstart+(j-32)*2+66] = string.sub(line, 129, 256)
+		end
+	end
     
     file:close()
     
