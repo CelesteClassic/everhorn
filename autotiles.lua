@@ -43,7 +43,7 @@ autotiles = {
         [14] = 84,
         [15] = 83,
     },
-    -- bg dirt (simplistic - only 
+    -- bg dirt (simplistic - only corner tiles are used)
     [3] = {
 		[0]  = 40,
 		[1]  = 40,
@@ -61,6 +61,12 @@ autotiles = {
 		[13] = 40,
 		[14] = 40,
 		[15] = 40,
+		-- extra
+		[16] = 16,
+		[17] = 56,
+		[18] = 88,
+		[19] = 103,
+		[20] = 104,
 	},
 }
 
