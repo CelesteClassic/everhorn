@@ -71,3 +71,38 @@ function b26(n)
 		return alph[n + 1]
 	end
 end
+
+function loadroomdata(room, levelstr)
+	for i = 0, room.w - 1 do
+		for j = 0, room.h - 1 do
+			local k = i + j*room.w 
+			room.data[i][j] = fromhex(string.sub(levelstr, 1 + 2*k, 2 + 2*k))
+		end
+	end
+end
+
+function dumproomdata(room)
+	local s = ""
+	for j = 0, room.h - 1 do
+		for i = 0, room.w - 1 do
+			s = s .. tohex(room.data[i][j])
+		end
+	end
+	return s
+end
+
+function loadproject(str)
+	local proj = loadlua(str)
+	for n, room in ipairs(proj, rooms) do
+		proj.data, err = loadroomdata(room, room.str)
+		if err then error(err) end
+	end
+	return proj
+end
+
+function dumpproject(proj)
+	for n, room in ipairs(proj.rooms) do
+		proj.str = dumproomdata(room)
+	end
+	return serpent.line(t, {compact = true, comment = false, keyignore = {"data"}})
+end

@@ -131,7 +131,7 @@ function select(i1, j1, i2, j2)
 end
 
 function pushHistory()
-    local s = dumplua(project)
+    local s = dumpproject(project)
     if s ~= app.history[app.historyN] then
         --print("BEFORE: "..tostring(app.history[app.historyN]))
         --print("AFTER: "..s)
@@ -150,7 +150,7 @@ function undo()
         app.historyN = app.historyN - 1
         
         local err
-        project, err = loadlua(app.history[app.historyN])
+        project, err = loadproject(app.history[app.historyN])
         if err then error(err) end
     end
     
@@ -162,7 +162,7 @@ function redo()
         app.historyN = app.historyN + 1
         
         local err
-        project, err = loadlua(app.history[app.historyN])
+        project, err = loadproject(app.history[app.historyN])
         if err then error(err) end
     end
     

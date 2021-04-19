@@ -120,12 +120,7 @@ function loadpico8(filename)
             local b = data.roomBounds[n]
             if b then
                 local room = newRoom(b.x, b.y, b.w, b.h)
-                for i = 0, b.w - 1 do
-                    for j = 0, b.h - 1 do
-                        local k = i + j*b.w 
-                        room.data[i][j] = fromhex(string.sub(levelstr, 1 + 2*k, 2 + 2*k))
-                    end
-                end
+                loadroomdata(room, levelstr)
                 room.title = b.title
                 data.rooms[n] = room
             end
@@ -234,13 +229,7 @@ function savePico8(filename)
                 local room = project.rooms[n]
                 levels[n] = string.format("%f,%f,%f,%f,%s", room.x/128, room.y/128, room.w/16, room.h/16, room.title)
                 
-                local s = ""
-                for j = 0, room.h - 1 do
-                    for i = 0, room.w - 1 do
-                        s = s .. tohex(room.data[i][j])
-                    end
-                end
-                mapdata[n] = s
+                mapdata[n] = dumproomdata(room)
             end
             
             table.insert(out, k+1, "levels = "..dumplua(levels))
