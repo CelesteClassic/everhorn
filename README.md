@@ -4,7 +4,7 @@ don't look here, it's not ready yet
 
 **Everhorn** is a map editor for Celeste Classic mods that use [evercore](https://github.com/CelesteClassic/evercore) or are based on it.
 
-![image](https://user-images.githubusercontent.com/25254726/115166006-a1dde580-a0b9-11eb-8c04-fd1de72a8650.png)
+![image](https://user-images.githubusercontent.com/25254726/115166301-29782400-a0bb-11eb-9b47-a78dc3e98f81.png)
 
 # Install
 
@@ -45,7 +45,7 @@ mapdata={
 * **R** - **rename** room.
 * **Shift+Delete** - **delete** room.
 * **Ctrl+Shift+C** - **copy** the entire room (it's text-based, so you can send it to someone directly).
-* **Space** opens/closes the **tool menu**. It's a bit unconventional, but snappy. Either click on the tool, or *hover over it*, then move to the right and click the tile you want to use. The tileset also includes 2 **autotiles**, which will automatically pick the right version of the tile based on it's neighbors. They are defined to match vanilla snow and ice (you can put any sprites instead, of course, and I can define more if needed).
+* **Space** shows/hides the **tool panel** with the tools and the tileset. The tileset also includes 2 **autotiles**, which will automatically pick the right version of the tile based on it's neighbors. They are defined to match vanilla snow and ice (you can put any sprites instead, of course, and I can define more if needed).
 * * **Brush** - left click to paint with the tile, right click to erase (tile 0)
 * * **Rectangle** - same but in rectangles.
 * * **Select** - basic selection tool, click and drag to select a rectangle, then you can move it, place it, copy or cut it with **Ctrl+C**, **Ctrl+X** and paste with **Ctrl+V**.
