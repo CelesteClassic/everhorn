@@ -24,7 +24,7 @@ function love.mousepressed(x, y, button, istouch, presses)
                 return
             end
             
-            if app.tool == "brush" then
+            if app.tool == "brush" and not app.suppressMouse then
 				app.brushing = true
 			elseif app.tool == "select" then
 				local ti, tj = mouseOverTile()
