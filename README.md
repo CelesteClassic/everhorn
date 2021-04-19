@@ -5,17 +5,9 @@
 
 ![image](https://user-images.githubusercontent.com/25254726/115297327-c0e58180-a164-11eb-960a-832990c192fc.png)
 
-# Install
-
-Currently only 64-bit Windows is supported; it is possible to support Linux and Mac but only if you really beg me (@avi) for it - cross-platform stuff is pain.
-
-1. Install [love2d 11.*](https://love2d.org/) (use installer)
-2. Press the green Code button at the top of this page and download the .zip with the latest version, or clone the repository with git
-3. Double-click `everhorn.bat` to run it
-
 # How it works
 
-Everhorn is a room-based editor, like Ahorn. While it is able to open and save vanilla Celeste carts, splitting them into 16x16 rooms, its true power is revealed when using [evercore](https://github.com/CelesteClassic/evercore). To get started with an *evercore*-based cart, you need to open up the code in it, find the place where `levels` and `mapdata` are defined and surround them in `--@begin` and `--@end` comments like this:
+Everhorn is a room-based editor, like Ahorn. While it is able to open and save vanilla Celeste carts, splitting them into 16x16 rooms, its true power is revealed when using [evercore](https://github.com/CelesteClassic/evercore), which is able load maps from variables `levels` and `mapdata`, located in the second code tab. To get started with an *evercore*-based cart, you need to open up the code in it, find the place where `levels` and `mapdata` are defined and surround them in `--@begin` and `--@end` comments like this:
 
 ```lua
 --@begin
@@ -30,6 +22,14 @@ mapdata={
 ```
 
 *Everhorn* will now be able to locate this section (*'everhorn section'*) and **automatically** read `levels` and `mapdata` from it and write them back. Note that you can create as many rooms as you want, however, *evercore* will actually load them into the normal PICO-8 map the moment you enter them. This means that you *must* place rooms within the boundaries of the map (shown as a grid), or you'll get fucky stuff (nothing permanent though, don't worry). However, you can simply stack rooms on top of each other and it will work fine.
+
+# Install
+
+Currently only 64-bit Windows is supported; it is possible to support Linux and Mac but only if you really beg me (@avi) for it - cross-platform stuff is pain.
+
+1. Install [love2d 11.*](https://love2d.org/) (use installer)
+2. Press the green Code button at the top of this page and download the .zip with the latest version, or clone the repository with git
+3. Double-click `everhorn.bat` to run it
 
 # Usage
 
