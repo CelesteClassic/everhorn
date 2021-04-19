@@ -318,7 +318,7 @@ function love.draw()
     end
     
     if app.playtesting then
-        local s = "[PLAYTESTING]"
+        local s = app.playtesting == 1 and "[playtesting]" or "[playtesting, 2 dashes]"
         love.graphics.print(s, 4, 4)
     end
     

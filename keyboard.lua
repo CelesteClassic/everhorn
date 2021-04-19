@@ -232,7 +232,13 @@ function love.keypressed(key, scancode, isrepeat)
     elseif key == "return" then
         placeSelection()
     elseif key == "tab" then
-        app.playtesting = not app.playtesting
+        if not app.playtesting then
+			app.playtesting = 1
+		elseif app.playtesting == 1 then
+			app.playtesting = 2
+		else
+			app.playtesting = false
+		end
     end
 end
 

@@ -215,9 +215,17 @@ function savePico8(filename)
             
             table.insert(out, k+1, "levels = "..dumplua(levels))
             table.insert(out, k+2, "mapdata = "..dumplua(mapdata))
+			local inject = ""
             if app.playtesting and app.room then
-                table.insert(out, k+3, "local __init = _init function _init() __init() begin_game() load_level("..app.room..") music(-1) end")
+				inject = inject.."local __init = _init function _init() __init() begin_game() load_level("..app.room..") music(-1)"
+				
+				if app.playtesting == 2 then
+					inject = inject.." max_djump=2"
+				end
+				
+				inject = inject.." end"
             end
+            table.insert(out, k+3, inject)
         end
     end
     
