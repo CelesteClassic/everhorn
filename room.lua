@@ -17,6 +17,7 @@ function drawRoom(room, p8data, highlight)
     for i = 0, room.w - 1 do
         for j = 0, room.h - 1 do
             local n = room.data[i][j]
+            if not p8data.quads[n] then print(n) end
             if not highlight or n~=0 then
                 love.graphics.setColor(1, 1, 1)
                 love.graphics.draw(p8data.spritesheet, p8data.quads[n], room.x + i*8, room.y + j*8)

@@ -93,16 +93,17 @@ end
 
 function loadproject(str)
 	local proj = loadlua(str)
-	for n, room in ipairs(proj, rooms) do
-		proj.data, err = loadroomdata(room, room.str)
+	for n, room in pairs(proj.rooms) do
+		room.data = fill2d0s(room.w, room.h)
+		loadroomdata(room, room.str)
 		if err then error(err) end
 	end
 	return proj
 end
 
 function dumpproject(proj)
-	for n, room in ipairs(proj.rooms) do
-		proj.str = dumproomdata(room)
+	for n, room in pairs(proj.rooms) do
+		room.str = dumproomdata(room)
 	end
-	return serpent.line(t, {compact = true, comment = false, keyignore = {"data"}})
+	return serpent.line(proj, {compact = true, comment = false, keyignore = {["data"] = true}})
 end
