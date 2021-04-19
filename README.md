@@ -1,14 +1,13 @@
 # Everhorn
-don't look here, it's not ready yet
+**DESPITE MY BEST EFFORTS THERE MAY BE BUGS, CONSIDER THIS A BETA AT THIS POINT**
 
-
-**Everhorn** is a map editor for Celeste Classic mods that use [evercore](https://github.com/CelesteClassic/evercore) or are based on it.
+**Everhorn** is a map editor for Celeste Classic mods that use [evercore](https://github.com/CelesteClassic/evercore) or a compatible level system.
 
 ![image](https://user-images.githubusercontent.com/25254726/115166301-29782400-a0bb-11eb-9b47-a78dc3e98f81.png)
 
 # Install
 
-Currently only 64-bit Windows is supported, Linux and Mac are possible but only if you beg me (@avi) for it - cross-platform stuff is pain.
+Currently only 64-bit Windows is supported; it is possible to support Linux and Mac but only if you really beg me (@avi) for it - cross-platform stuff is pain.
 
 1. Install [love2d 11.*](https://love2d.org/) (use installer)
 2. Press the green Code button at the top of this page and download the .zip with the latest version, or clone the repository with git
