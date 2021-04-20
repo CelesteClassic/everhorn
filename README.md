@@ -21,7 +21,7 @@ mapdata={
 --@end
 ```
 
-*Everhorn* will now be able to locate this section (*'everhorn section'*) and **automatically** read `levels` and `mapdata` from it and write them back. Note that you can create as many rooms as you want, however, *Evercore* will actually load them into the normal PICO-8 map the moment you enter them. This means that you *must* place rooms within the boundaries of the map (shown as a grid), or you'll get fucky stuff (nothing permanent though, don't worry). However, you can simply stack rooms on top of each other and it will work fine.
+*Everhorn* will now be able to locate this section (*'Everhorn section'*) and **automatically** read `levels` and `mapdata` from it and write them back. Note that you can create as many rooms as you want, however, *Evercore* will actually load them into the normal PICO-8 map the moment you enter them. This means that you *must* place rooms within the boundaries of the map (shown as a grid), or you'll get fucky stuff (nothing permanent though, don't worry). However, you can simply stack rooms on top of each other and it will work fine.
 
 # Install
 
@@ -34,7 +34,7 @@ Currently only 64-bit Windows is supported; it is possible to support Linux and 
 # Usage
 
 * **Ctrl+O** - **Open** (loads rooms and the spritesheet).
-* **Ctrl+S**, **Ctrl+Shift+S** - **Save/Save As**. If file exists, only the code in the *everhorn section* will be updated. If you select a different file, a copy will be created based on the currently opened cart. So, if you need to move rooms from cart A to cart B (for example, to update the cart), open cart A, then save to cart B.
+* **Ctrl+S**, **Ctrl+Shift+S** - **Save/Save As**. If file exists, only the code in the *Everhorn section* will be updated. If you select a different file, a copy will be created based on the currently opened cart. So, if you need to move rooms from cart A to cart B (for example, to update the cart), open cart A, then save to cart B.
 * **Ctrl+R** - **reload** the spritesheet from the currently opened cart.
 * **Ctrl+Z**, **Ctrl+Shift+Z** - **Undo/Redo**. Can undo pretty much anything (including something like deleting a room).
 * **Middle click** pans camera, **Scroll** zooms in/out.
