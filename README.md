@@ -27,9 +27,7 @@ mapdata={
 
 Currently only 64-bit Windows is supported; it is possible to support Linux and Mac but only if you really beg me (@avi) for it - cross-platform stuff is pain.
 
-1. Install [love2d 11.*](https://love2d.org/) (use installer)
-2. Press the green Code button at the top of this page and download the .zip with the latest version, or clone the repository with git
-3. Double-click `everhorn.bat` to run it
+Go to the Releases section at the top of the page.
 
 # Usage
 
