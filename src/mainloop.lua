@@ -187,7 +187,7 @@ function love.update(dt)
                 activeRoom().data[ti][tj] = n
                 
                 if app.autotile then
-                    autotileWithNeighbors(activeRoom(), ti, tj)
+                    autotileWithNeighbors(activeRoom(), ti, tj, app.autotile)
                 end
             end
         end

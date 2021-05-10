@@ -1,7 +1,19 @@
+-- functions to read lines correctly for \r\n line endings
+local function cr_lines(s)
+	return s:gsub('\r\n?', '\n'):gmatch('(.-)\n')
+end
+
+local function cr_file_lines(file)
+    local s = file:read('*a')
+    return cr_lines(s)
+end
+
+-- file handling
+
 function loadpico8(filename)
     love.graphics.setDefaultFilter("nearest", "nearest")
 
-    local file, err = io.open(filename)
+    local file, err = io.open(filename, "rb")
 
     local data = {}
     
@@ -26,7 +38,7 @@ function loadpico8(filename)
     
     local sections = {}
     local cursec = nil
-    for line in file:lines() do
+    for line in cr_file_lines(file) do
         local sec = string.match(line, "^__(%a+)__$")
         if sec then
             cursec = sec
@@ -193,9 +205,9 @@ function savePico8(filename)
         end
     end
     
-    local file = io.open(filename, "r")
+    local file = io.open(filename, "rb")
     if not file and app.openFileName then
-        file = io.open(app.openFileName, "r")
+        file = io.open(app.openFileName, "rb")
     end
     if not file then
         return false
@@ -205,7 +217,7 @@ function savePico8(filename)
     
     local ln = 1
     local gfxstart, mapstart
-    for line in file:lines() do
+    for line in cr_file_lines(file) do
         table.insert(out, line)
         ln = ln + 1
     end
@@ -282,7 +294,7 @@ function savePico8(filename)
     
     file:close()
     
-    file = io.open(filename, "w")
+    file = io.open(filename, "wb")
     file:write(table.concat(out, "\n"))
     file:close()
     

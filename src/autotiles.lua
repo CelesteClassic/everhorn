@@ -100,9 +100,8 @@ local function matches(x, k)
     return x == 0 and true or x == k
 end
 
-function autotile(room, i, j)
-    local k = isAutotile(room, i, j, true)
-    if k and k ~= 0 and autotiles[k] then
+function autotile(room, i, j, k)
+    if k and k == isAutotile(room, i, j, true) then
         local nb = b1(matches(isAutotile(room, i + 1, j), k))
                  + b1(matches(isAutotile(room, i - 1, j), k)) * 2
                  + b1(matches(isAutotile(room, i, j + 1), k)) * 4
@@ -111,10 +110,10 @@ function autotile(room, i, j)
     end
 end
 
-function autotileWithNeighbors(room, i, j)
-	autotile(room, i, j)
-	autotile(room, i + 1, j)
-	autotile(room, i - 1, j)
-	autotile(room, i, j + 1)
-	autotile(room, i, j - 1)
+function autotileWithNeighbors(room, i, j, k)
+	autotile(room, i, j, k)
+	autotile(room, i + 1, j, k)
+	autotile(room, i - 1, j, k)
+	autotile(room, i, j + 1, k)
+	autotile(room, i, j - 1, k)
 end
