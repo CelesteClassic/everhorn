@@ -74,7 +74,7 @@ function love.keypressed(key, scancode, isrepeat)
 				end
             end
             if openOk then
-				showMessage("Opened "..string.match(filename, "\\([^\\]*)$"))
+				showMessage("Opened "..string.match(filename, psep.."([^"..psep.."]*)$"))
 			else
 				showMessage("Failed to open file")
 			end
@@ -95,7 +95,7 @@ function love.keypressed(key, scancode, isrepeat)
             end
             
             if filename and savePico8(filename) then
-                showMessage("Saved "..string.match(filename, "\\([^\\]*)$"))
+                showMessage("Saved "..string.match(filename, psep.."([^"..psep.."]*)$"))
             else
                 showMessage("Failed to save cart")
             end

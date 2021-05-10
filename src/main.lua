@@ -10,6 +10,7 @@ require 'autotiles'
 
 -- global constants
 tms = 4 -- tile menu scale
+psep = love.system.getOS() == "Windows" and "\\" or "/" -- path separator
 
 
 
