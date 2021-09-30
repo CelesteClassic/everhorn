@@ -9,7 +9,8 @@ require 'autotiles'
 
 
 -- global constants
-tms = 4 -- tile menu scale
+global_scale=2 -- global scale, to run nicely on hi dpi displays
+tms = 4*global_scale -- tile menu scale
 psep = love.system.getOS() == "Windows" and "\\" or "/" -- path separator
 
 
@@ -19,6 +20,7 @@ psep = love.system.getOS() == "Windows" and "\\" or "/" -- path separator
 
 function newProject()
     -- this is UI things
+		love.graphics.setNewFont(12*global_scale)
     app = {
         camX = 0,
         camY = 0,
@@ -47,7 +49,9 @@ function newProject()
         roomAdded = false,
         
     }
-
+		--ui:styleSetFont(love.graphics.getFont())
+		ui:stylePush({['font']=app.font})
+		--print(app.font:getHeight())
     -- this is what goes into history and (mostly) gets saved
     project = {
         rooms = {}, 

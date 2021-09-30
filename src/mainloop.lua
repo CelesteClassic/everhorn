@@ -79,6 +79,7 @@ function love.update(dt)
     app.left, app.top = rpw, 0
 
     ui:frameBegin()
+		--ui:scale(2)
     ui:stylePush {
         window = {
             spacing = {x = 1, y = 1},
@@ -94,7 +95,7 @@ function love.update(dt)
     
     -- room panel
     if ui:windowBegin("Room Panel", 0, 0, rpw, app.H, {"scrollbar"}) then
-        ui:layoutRow("dynamic", 25, 1)
+        ui:layoutRow("dynamic", 25*global_scale, 1)
         for n = 1, #project.rooms do
             if ui:selectable("["..n.."] "..project.rooms[n].title, n == app.room) then
                 app.room = n
@@ -112,10 +113,10 @@ function love.update(dt)
     if app.showToolPanel then
 		local tpw = 16*8*tms + 18, 9*(8*tms+1) + 25 + 2
 		if ui:windowBegin("Tool panel", app.W - tpw, 0, tpw, app.H) then
-			ui:layoutRow("static", 25, 100, 2)
+			ui:layoutRow("static", 25*global_scale, 100*global_scale, 2)
 			if ui:selectable("Brush", app.tool == "brush") then app.tool = "brush" end
 			if ui:selectable("Rectangle", app.tool == "rectangle") then app.tool = "rectangle" end
-			ui:layoutRow("static", 25, 100, 1)
+			ui:layoutRow("static", 25*global_scale, 100*global_scale, 1)
 			if ui:selectable("Select", app.tool == "select") then app.tool = "select" end
 			
 			for j = 0, 7 do
@@ -129,7 +130,7 @@ function love.update(dt)
 				end
 			end
 			
-			ui:layoutRow("dynamic", 25, 1)
+			ui:layoutRow("dynamic", 25*global_scale, 1)
             ui:label("Autotiles:")
             ui:layoutRow("static", 8*tms, 8*tms, #autotiles)
 			for k, auto in ipairs(autotiles) do
@@ -145,9 +146,9 @@ function love.update(dt)
     if app.renameRoom then
         local room = app.renameRoom
         
-        local w, h = 200, 88
+        local w, h = 200*global_scale, 88*global_scale
         if ui:windowBegin("Rename room", app.W/2 - w/2, app.H/2 - h/2, w, h, {"title", "border", "closable", "movable"}) then
-            ui:layoutRow("dynamic", 25, 1)
+            ui:layoutRow("dynamic", 25*global_scale, 1)
             
             local state, changed
             ui:editFocus()
@@ -250,7 +251,6 @@ end
 function love.draw()
     love.graphics.clear(0.25, 0.25, 0.25)
     love.graphics.reset()
-    
     love.graphics.setLineStyle("rough")
     
     local x, y = love.mouse.getPosition()
@@ -312,7 +312,8 @@ function love.draw()
     love.graphics.reset()
     love.graphics.setColor(1, 1, 1)
     love.graphics.translate(app.left, app.top)
-    
+    love.graphics.setFont(app.font)
+		
     if app.message then
         love.graphics.print(app.message, 4, app.H - app.font:getHeight() - 4)
     end
@@ -321,6 +322,5 @@ function love.draw()
         local s = app.playtesting == 1 and "[playtesting]" or "[playtesting, 2 dashes]"
         love.graphics.print(s, 4, 4)
     end
-    
     ui:draw()
 end
