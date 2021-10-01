@@ -177,7 +177,7 @@ function love.keypressed(key, scancode, isrepeat)
                 app.tool = "select"
                 select(0, 0, activeRoom().w - 1, activeRoom().h - 1)
             end
-		elseif key=="l" then 
+		elseif key=="h" then 
 			app.showGarbageTiles=not app.showGarbageTiles
         end
     else -- if ctrl is not down
