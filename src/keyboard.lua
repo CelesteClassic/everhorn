@@ -54,7 +54,7 @@ function love.keypressed(key, scancode, isrepeat)
     
     -- non-repeatable global shortcuts
     
-    if love.keyboard.isDown("lctrl") then
+    if love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl") then
         -- Ctrl+O
         if key == "o" then
             local filename = filedialog.open()
@@ -177,6 +177,8 @@ function love.keypressed(key, scancode, isrepeat)
                 app.tool = "select"
                 select(0, 0, activeRoom().w - 1, activeRoom().h - 1)
             end
+		elseif key=="l" then 
+			app.showGarbageTiles=not app.showGarbageTiles
         end
     else -- if ctrl is not down
 		if key == "delete" and love.keyboard.isDown("lshift") then

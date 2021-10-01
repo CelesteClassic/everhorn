@@ -119,7 +119,7 @@ function love.update(dt)
 			ui:layoutRow("static", 25*global_scale, 100*global_scale, 1)
 			if ui:selectable("Select", app.tool == "select") then app.tool = "select" end
 			
-			for j = 0, 7 do
+			for j = 0, app.showGarbageTiles and 15 or 7 do
 				ui:layoutRow("static", 8*tms, 8*tms, 16)
 				for i = 0, 15 do
 					local n = i + j*16

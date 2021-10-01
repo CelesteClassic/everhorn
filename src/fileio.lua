@@ -48,9 +48,21 @@ function loadpico8(filename)
         end
     end
     file:close()
-    
-    local spritesheet_data = love.image.newImageData(128, 64)
-    for j = 0, spritesheet_data:getHeight() - 1 do
+		local p8font=love.image.newImageData("pico-8_font.png")
+		local function toGrey(x,y,r,g,b,a)
+			return r*194/255,g*195/255,b*199/255,a
+		end
+		p8fontGrey=love.image.newImageData(p8font:getWidth(),p8font:getHeight(),p8font:getFormat(),p8font)
+		p8fontGrey:mapPixel(toGrey)
+		local function get_font_quad(digit)
+				if digit<10 then
+						return 8*digit,24,4,8
+				else
+						return 8*(digit-9),48,4,8
+				end
+		end
+    local spritesheet_data = love.image.newImageData(128, 128)
+    for j = 0, spritesheet_data:getHeight()/2 - 1 do
         local line = sections["gfx"] and sections["gfx"][j + 1] or "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
         for i = 0, spritesheet_data:getWidth() - 1 do
             local s = string.sub(line, 1 + i, 1 + i)
@@ -60,6 +72,17 @@ function loadpico8(filename)
         end
     end
     
+    for j =8,15 do
+        for i = 0, 15 do
+				   local id=i+16*(j-8) 
+					 local d1=math.floor(id/16)
+					 local d2=id%16
+					 --spritesheet_data:paste(p8font,8*i,8*j,get_font_quad(d1))
+					 spritesheet_data:paste(p8fontGrey,8*i,8*j,get_font_quad(d1))
+					 spritesheet_data:paste(p8font,8*i+4,8*j,get_font_quad(d2))
+        end
+    end
+
     data.spritesheet = love.graphics.newImage(spritesheet_data)
     
     data.quads = {}

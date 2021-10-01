@@ -34,6 +34,7 @@ function newProject()
         messageTimeLeft = nil,
         playtesting = false,
         showToolPanel = true,
+		showGarbageTiles=false,
         
         -- history (undo stack)
         history = {},
