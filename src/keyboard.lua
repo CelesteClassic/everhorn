@@ -233,7 +233,7 @@ function love.keypressed(key, scancode, isrepeat)
         app.showToolPanel = not app.showToolPanel
     elseif key == "return" then
         placeSelection()
-    elseif key == "tab" then
+    elseif key == "tab" and not love.keyboard.isDown("lalt") then
         if not app.playtesting then
 			app.playtesting = 1
 		elseif app.playtesting == 1 then
