@@ -146,16 +146,41 @@ function love.update(dt)
     if app.renameRoom then
         local room = app.renameRoom
         
-        local w, h = 200*global_scale, 88*global_scale
+        local w, h = 200*global_scale, 125*global_scale
         if ui:windowBegin("Rename room", app.W/2 - w/2, app.H/2 - h/2, w, h, {"title", "border", "closable", "movable"}) then
+            local x,y=div8(room.x),div8(room.y)
+            local fits_on_map=x>=0 and x+room.w<=128 and y>=0 and y+room.h<=64
+            ui:layoutRow("dynamic",25*global_scale,1)
+            if not fits_on_map then
+                local style={}
+                for k,v in pairs({"text normal", "text hover", "text active"}) do
+                    style[v]="#707070"
+                end 
+                for k,v in pairs({"normal", "hover", "active"}) do
+                    style[v]="#606060"
+                end 
+                for k,v in pairs({"cursor normal","cursor hover"}) do 
+                    style[v]="#303030"
+                end 
+                --style["border color"]="#787878"
+                ui:stylePush({['checkbox']=style})
+
+                --this is a hack
+                --TODO: use images and get proper hiding
+            else
+                ui:stylePush({})
+            end 
+            ui:checkbox("Level Stored As Hex",fits_on_map and app.renameRoomVTable.hex or true)
+            ui:stylePop()
             ui:layoutRow("dynamic", 25*global_scale, 1)
             
             local state, changed
             ui:editFocus()
-            state, changed = ui:edit("simple", app.renameRoomVTable)
+            state, changed = ui:edit("simple", app.renameRoomVTable.name)
             
             if ui:button("OK") or app.enterPressed then
-                room.title = app.renameRoomVTable.value
+                room.title = app.renameRoomVTable.name.value
+                room.hex = app.renameRoomVTable.hex.value
                 app.renameRoom = nil
             end
         else

@@ -4,6 +4,7 @@ function newRoom(x, y, w, h)
         y = y or 0,
         w = w or 16,
         h = h or 16,
+        hex=true,
         data = {},
         title = "",
     }

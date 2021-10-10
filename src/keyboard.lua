@@ -256,7 +256,9 @@ function love.keyreleased(key, scancode)
 	-- so you don't input r into the field
     if key == "r" and not love.keyboard.isDown("lctrl") and activeRoom() then
 		app.renameRoom = activeRoom()
-        app.renameRoomVTable = {value = app.renameRoom.title}
+        app.renameRoomVTable = { name = {value = app.renameRoom.title},
+                                 hex  = {value = app.renameRoom.hex}
+                               }
     end
 end
 

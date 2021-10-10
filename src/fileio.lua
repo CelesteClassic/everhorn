@@ -184,7 +184,9 @@ function loadpico8(filename)
     for n, b in ipairs(data.roomBounds) do
         if not data.rooms[n] then
             local room = newRoom(b.x, b.y, b.w, b.h)
-            
+            room.hex=false
+            room.title = b.title
+
             for i = 0, b.w - 1 do
                 for j = 0, b.h - 1 do
                     local i1, j1 = div8(b.x) + i, div8(b.y) + j
@@ -218,12 +220,14 @@ function savePico8(filename)
     local map = fill2d0s(128, 64)
     
     for _, room in ipairs(project.rooms) do
-        local i0, j0 = div8(room.x), div8(room.y)
-        for i = 0, room.w - 1 do
-            for j = 0, room.h - 1 do
-				if map[i0+i] then
-					map[i0+i][j0+j] = room.data[i][j]
-				end
+        if not room.hex then
+            local i0, j0 = div8(room.x), div8(room.y)
+            for i = 0, room.w - 1 do
+                for j = 0, room.h - 1 do
+                    if map[i0+i] then
+                        map[i0+i][j0+j] = room.data[i][j]
+                    end
+                end
             end
         end
     end
@@ -265,56 +269,90 @@ function savePico8(filename)
                 local room = project.rooms[n]
                 levels[n] = string.format("%f,%f,%f,%f,%s", room.x/128, room.y/128, room.w/16, room.h/16, room.title)
                 
-                mapdata[n] = dumproomdata(room)
+                if room.hex then 
+                    mapdata[n] = dumproomdata(room)
+                end
             end
-            
-            table.insert(out, k+1, "levels = "..dumplua(levels))
-            table.insert(out, k+2, "mapdata = "..dumplua(mapdata))
-			local inject = ""
-            if app.playtesting and app.room then
-				inject = inject.."local __init = _init function _init() __init() begin_game() load_level("..app.room..") music(-1)"
-				
-				if app.playtesting == 2 then
-					inject = inject.." max_djump=2"
-				end
-				
-				inject = inject.." end"
+        table.insert(out, k+1, "levels = "..dumplua(levels))
+        table.insert(out, k+2, "mapdata = "..dumplua(mapdata))
+        local inject = ""
+        if app.playtesting and app.room then
+            inject = inject.."local __init = _init function _init() __init() begin_game() load_level("..app.room..") music(-1)"
+
+                if app.playtesting == 2 then
+                    inject = inject.." max_djump=2"
+                end
+
+                inject = inject.." end"
             end
             table.insert(out, k+3, inject)
         end
     end
     
     -- map section
-    if not evh_found then
-		local gfxstart, mapstart
-		for k = 1, #out do
-			if out[k] == "__gfx__" then
-				gfxstart = k
-			elseif out[k] == "__map__" then
-				mapstart = k
-			end
-		end
-		if not (mapstart and gfxstart) then
-			error("uuuh")
-		end
-		
-		for j = 0, 31 do
-			local line = ""
-			for i = 0, 127 do
-				line = line .. tohex(map[i][j])
-			end
-			out[mapstart+j+1] = line
-		end
-		for j = 32, 63 do
-			local line = ""
-			for i = 0, 127 do
-				line = line .. tohex_swapnibbles(map[i][j])
-			end
-			out[gfxstart+(j-32)*2+65] = string.sub(line, 1, 128)
-			out[gfxstart+(j-32)*2+66] = string.sub(line, 129, 256)
-		end
-	end
+
+    -- start out by making sure both sections exist, and are sized to max size
+
     
+    local gfxexist, mapexist=false,false
+    for k = 1, #out do
+        if out[k] == "__gfx__" then
+            gfxexist=true
+        elseif out[k] == "__map__" then
+            mapexist=true
+        end
+    end
+
+    if not gfxexist then
+        add(out,"__gfx__")
+    end
+    if not mapexist then
+        add(out,"__map__")
+    end
+
+    for k,v in ipairs(out) do 
+        if out[k]=="__gfx__" or out[k]=="__map__" then 
+            local j=k+1
+            while j<#out and not out[j]:match("__%a+__") do
+                j=j+1
+            end 
+            local emptyline=""
+            for i=1,out[k]=="__gfx__" and 128 or 256 do 
+                emptyline=emptyline.."0"
+            end 
+            for i=j,k+(out[k]=="__gfx__" and 128 or 32) do 
+                table.insert(out,i,emptyline)
+            end
+        end 
+    end
+    local gfxstart, mapstart
+    for k = 1, #out do
+        if out[k] == "__gfx__" then
+            gfxstart = k
+        elseif out[k] == "__map__" then
+            mapstart = k
+        end
+    end
+    if not (mapstart and gfxstart) then
+        error("uuuh")
+    end
+
+    for j = 0, 31 do
+        local line = ""
+        for i = 0, 127 do
+            line = line .. tohex(map[i][j])
+        end
+        out[mapstart+j+1] = line
+    end
+    for j = 32, 63 do
+        local line = ""
+        for i = 0, 127 do
+            line = line .. tohex_swapnibbles(map[i][j])
+        end
+        out[gfxstart+(j-32)*2+65] = string.sub(line, 1, 128)
+        out[gfxstart+(j-32)*2+66] = string.sub(line, 129, 256)
+    end
+
     file:close()
     
     file = io.open(filename, "wb")
