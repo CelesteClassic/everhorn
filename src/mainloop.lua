@@ -71,6 +71,14 @@ function love.load()
     
     newProject()
     pushHistory()
+
+
+    checkmarkIm=love.graphics.newImage("checkmark.png")
+    checkmarkWithBg=love.graphics.newCanvas(checkmarkIm:getWidth()*5/4,checkmarkIm:getHeight()*5/4)
+    love.graphics.setCanvas(checkmarkWithBg)
+    love.graphics.clear(0x64/0xff,0x64/0xff,0x64/0xff) 
+    love.graphics.draw(checkmarkIm,checkmarkIm:getWidth()/8,checkmarkIm:getHeight()/8)
+    love.graphics.setCanvas()
 end
 
 function love.update(dt)
@@ -90,7 +98,11 @@ function love.update(dt)
 			["normal active"] = "#000000",
 			["hover active"] = "#000000",
 			["pressed active"] = "#000000",
-		}
+		},
+        checkbox = {
+            ["cursor normal"] = checkmarkIm,
+            ["cursor hover"] = checkmarkIm
+        }
     }
     
     -- room panel
@@ -157,16 +169,11 @@ function love.update(dt)
                     style[v]="#707070"
                 end 
                 for k,v in pairs({"normal", "hover", "active"}) do
-                    style[v]="#606060"
+                    style[v]=checkmarkWithBg -- show both selected and unselected as having a check to avoid nukelear limitations
+                    -- kinda hacky but it works decently enough
                 end 
-                for k,v in pairs({"cursor normal","cursor hover"}) do 
-                    style[v]="#303030"
-                end 
-                --style["border color"]="#787878"
                 ui:stylePush({['checkbox']=style})
 
-                --this is a hack
-                --TODO: use images and get proper hiding
             else
                 ui:stylePush({})
             end 
