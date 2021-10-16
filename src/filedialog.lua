@@ -15,7 +15,9 @@ if love.system.getOS()~="OS X" then
 else
     local io=require 'io'
     local function run_python(arg)
-        local handle=io.popen("python filedialog.py "..arg)
+        local realpath=love.filesystem.getRealDirectory("filedialog.py").."/filedialog.py"
+        print(realpath)
+        local handle=io.popen("python " .. realpath .." "..arg)
         local return_code=handle:read("*n")
         local ret
         if return_code==0 then
