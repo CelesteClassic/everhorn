@@ -329,6 +329,9 @@ function savePico8(filename)
     
     cartdata = cartdata:gsub("(%-%-@begin.*levels%s*=%s*){.-}(.*%-%-@end)","%1"..dumplua(levels).."%2")
     cartdata = cartdata:gsub("(%-%-@begin.*mapdata%s*=%s*){.-}(.*%-%-@end)","%1"..dumplua(mapdata).."%2")
+
+    --remove playtesting inject if one already exists:
+    cartdata = cartdata:gsub("(%-%-@begin.*)local __init.-\n(.*%-%-@end)","%1".."%2")
     if app.playtesting and app.room then
         inject = "local __init = _init function _init() __init() begin_game() load_level("..app.room..") music(-1)"
         if app.playtesting == 2 then
