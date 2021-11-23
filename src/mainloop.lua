@@ -62,11 +62,21 @@ end
 
 -- MAIN LOOP
 
-function love.load()
+function love.load(args)
     love.keyboard.setKeyRepeat(true)
 
     ui = nuklear.newUI()
     
+    global_scale=1 -- global scale, to run nicely on hi dpi displays
+    tms = 4 -- tile menu scale
+
+    for _,v in ipairs(args) do
+        if v=="--hidpi" then 
+            global_scale = 2
+            tms = 4*global_scale
+        end
+    end
+
     --p8data = loadpico8(love.filesystem.getSource().."\\celeste.p8")
     
     newProject()
@@ -123,7 +133,7 @@ function love.update(dt)
     
     -- tool panel
     if app.showToolPanel then
-		local tpw = 16*8*tms + 18, 9*(8*tms+1) + 25 + 2
+		local tpw = 16*8*tms + 18
 		if ui:windowBegin("Tool panel", app.W - tpw, 0, tpw, app.H) then
 			ui:layoutRow("static", 25*global_scale, 100*global_scale, 2)
 			if ui:selectable("Brush", app.tool == "brush") then app.tool = "brush" end

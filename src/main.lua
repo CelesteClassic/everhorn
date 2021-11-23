@@ -9,10 +9,7 @@ require 'autotiles'
 
 
 -- global constants
-global_scale=2 -- global scale, to run nicely on hi dpi displays
-tms = 4*global_scale -- tile menu scale
 psep = love.system.getOS() == "Windows" and "\\" or "/" -- path separator
-
 
 
 -- GLOBAL VARIABLES (im dirty like that)
