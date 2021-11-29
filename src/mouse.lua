@@ -142,8 +142,14 @@ function love.mousemoved(x, y, dx, dy, istouch)
         app.camY = app.camY + my - app.camMoveY
     end
     if app.roomMoveX and app.room then
-        activeRoom().x = roundto8(mx - app.roomMoveX)
-        activeRoom().y = roundto8(my - app.roomMoveY)
+        local room=activeRoom()
+        room.x = roundto8(mx - app.roomMoveX)
+        room.y = roundto8(my - app.roomMoveY)
+        if not room.hex then
+            --can't move room stored in map outside of the map
+            room.x = math.max(0, math.min(1024 - 8*room.w, room.x))
+            room.y = math.max(0, math.min(512 - 8*room.h, room.y))
+        end
     end
     if project.selectionMoveX and project.selection then
         project.selection.x = roundto8(mx - project.selectionMoveX)

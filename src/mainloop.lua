@@ -241,7 +241,12 @@ function love.update(dt)
     
     if app.roomResizeSideX and app.room then
         local room = activeRoom()
-        
+
+        if not room.hex then
+            -- if the room is stored in mapdata, it still has to fit when resizing
+            mx = math.min(math.max(mx, 0), 1024)
+            my = math.min(math.max(my, 0), 512)
+        end
         local left, top = room.x, room.y
         local right, bottom = left + room.w*8, top + room.h*8
         
