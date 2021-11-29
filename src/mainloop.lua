@@ -255,10 +255,13 @@ function love.update(dt)
         
         local dx = div8(math.abs(mx-ax)) * sign(mx-ax) * app.roomResizeSideX
         local dy = div8(math.abs(my-ay)) * sign(my-ay) * app.roomResizeSideY
-        
+
+        dx = math.max(1, room.w + dx) - room.w
+        dy = math.max(1, room.h + dy) - room.h
+
         if dx ~= 0 or dy ~= 0 then
-            local newdata, neww, newh = {}, math.max(1, room.w + dx), math.max(1, room.h + dy)
-            
+            local newdata, neww, newh = {}, room.w + dx, room.h + dy
+
             -- copy all tiles (even if outside bounds - so they persist if you cut part of room off and then resize back)
             for i, col in pairs(room.data) do
                 for j, n in pairs(col) do
