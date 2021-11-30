@@ -39,23 +39,13 @@ for platform in platforms:
             for fn in filenames:
                 with open(fn, "rb") as inf:
                         of.write(inf.read())
-    elif platform == "linux":
+    else:
         # linux - no fancy packaging, just src and .so's
         # copy src
         shutil.copytree("build/src", f"build/{platform}", dirs_exist_ok=True)
         
         # copy .so's
         for so in ["nuklear.so", "nfd.so"]:
-            shutil.copy(f"bin/{platform}/{so}", f"build/{platform}")
-    elif platform == "macos":
-        # macos - no fancy packaging, just src and .so's
-        # copy src
-        shutil.copytree("build/src", f"build/{platform}", dirs_exist_ok=True)
-        
-        # copy .so and .py
-        # python file used as a hack for file dialog for macos
-        # since i couldn't compile nfd
-        for so in ["nuklear.so", "filedialog.py"]:
             shutil.copy(f"bin/{platform}/{so}", f"build/{platform}")
 
 # create archives    
