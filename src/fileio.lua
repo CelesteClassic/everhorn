@@ -1,10 +1,14 @@
 -- functions to read lines correctly for \r\n line endings
+
 local function cr_lines(s)
-	return s:gsub('\r\n?', '\n'):gmatch('(.-)\n')
+    return s:gsub('\r\n?', '\n'):gmatch('(.-)\n')
 end
 
 local function cr_file_lines(file)
     local s = file:read('*a')
+    if s:sub(#s, #s) ~= "\n" then
+        s = s .. "\n"
+    end
     return cr_lines(s)
 end
 
@@ -16,7 +20,7 @@ function loadpico8(filename)
     local file, err = io.open(filename, "rb")
 
     local data = {}
-    
+
     data.palette = {
         {0,  0,  0,  255},
         {29, 43, 83, 255},
@@ -35,7 +39,7 @@ function loadpico8(filename)
         {255,119,168,255},
         {255,204,170,255}
     }
-    
+
     local sections = {}
     local cursec = nil
     for line in cr_file_lines(file) do
@@ -48,19 +52,19 @@ function loadpico8(filename)
         end
     end
     file:close()
-		local p8font=love.image.newImageData("pico-8_font.png")
-		local function toGrey(x,y,r,g,b,a)
-			return r*194/255,g*195/255,b*199/255,a
-		end
-		p8fontGrey=love.image.newImageData(p8font:getWidth(),p8font:getHeight(),p8font:getFormat(),p8font)
-		p8fontGrey:mapPixel(toGrey)
-		local function get_font_quad(digit)
-				if digit<10 then
-						return 8*digit,24,4,8
-				else
-						return 8*(digit-9),48,4,8
-				end
-		end
+        local p8font=love.image.newImageData("pico-8_font.png")
+        local function toGrey(x,y,r,g,b,a)
+            return r*194/255,g*195/255,b*199/255,a
+        end
+        p8fontGrey=love.image.newImageData(p8font:getWidth(),p8font:getHeight(),p8font:getFormat(),p8font)
+        p8fontGrey:mapPixel(toGrey)
+        local function get_font_quad(digit)
+                if digit<10 then
+                        return 8*digit,24,4,8
+                else
+                        return 8*(digit-9),48,4,8
+                end
+        end
     local spritesheet_data = love.image.newImageData(128, 128)
     for j = 0, spritesheet_data:getHeight()/2 - 1 do
         local line = sections["gfx"] and sections["gfx"][j + 1] or "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
@@ -71,32 +75,32 @@ function loadpico8(filename)
             spritesheet_data:setPixel(i, j, c[1]/255, c[2]/255, c[3]/255, 1)
         end
     end
-    
+
     for j =8,15 do
         for i = 0, 15 do
-				   local id=i+16*(j-8) 
-					 local d1=math.floor(id/16)
-					 local d2=id%16
-					 --spritesheet_data:paste(p8font,8*i,8*j,get_font_quad(d1))
-					 spritesheet_data:paste(p8fontGrey,8*i,8*j,get_font_quad(d1))
-					 spritesheet_data:paste(p8font,8*i+4,8*j,get_font_quad(d2))
+                   local id=i+16*(j-8)
+                     local d1=math.floor(id/16)
+                     local d2=id%16
+                     --spritesheet_data:paste(p8font,8*i,8*j,get_font_quad(d1))
+                     spritesheet_data:paste(p8fontGrey,8*i,8*j,get_font_quad(d1))
+                     spritesheet_data:paste(p8font,8*i+4,8*j,get_font_quad(d2))
         end
     end
 
     data.spritesheet = love.graphics.newImage(spritesheet_data)
-    
+
     data.quads = {}
     for i = 0, 15 do
         for j = 0, 15 do
             data.quads[i + j*16] = love.graphics.newQuad(i*8, j*8, 8, 8, data.spritesheet:getDimensions())
         end
     end
-    
+
     data.map = {}
     for i = 0, 127  do
         data.map[i] = {}
         for j = 0, 31 do
-			local line = sections["map"] and sections["map"][j + 1] or "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+            local line = sections["map"] and sections["map"][j + 1] or "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
             local s = string.sub(line, 1 + 2*i, 2 + 2*i)
             data.map[i][j] = fromhex(s)
         end
@@ -108,45 +112,45 @@ function loadpico8(filename)
             data.map[i][j] = fromhex_swapnibbles(s)
         end
     end
-    
+
     data.rooms = {}
     data.roomBounds = {}
-    
+
     -- code: look for the magic comment
     local code = table.concat(sections["lua"], "\n")
     local evh = string.match(code, "%-%-@begin([^@]+)%-%-@end")
     local levels, mapdata
     if evh then
-		-- cut out comments - loadstring doesn't parse them for some reason
-		evh = string.gsub(evh, "%-%-[^\n]*\n", "")
-		evh = string.gsub(evh, "//[^\n]*\n", "")
-		
+        -- cut out comments - loadstring doesn't parse them for some reason
+        evh = string.gsub(evh, "%-%-[^\n]*\n", "")
+        evh = string.gsub(evh, "//[^\n]*\n", "")
+
         local chunk, err = loadstring(evh)
         if not err then
             local env = {}
             chunk = setfenv(chunk, env)
             chunk()
-            
+
             levels, mapdata = env.levels, env.mapdata
         end
     end
-    
+
     mapdata = mapdata or {}
-    
+
     -- flatten levels and mapdata
     local lvls = {}
     if levels then
-		for n, s in pairs(levels) do
-			table.insert(lvls, {n, s, mapdata[n]})
-		end
-	end
-	table.sort(lvls, function(p1, p2) return p1[1] < p2[1] end)
-	levels, mapdata = {}, {}
-	for n, p in pairs(lvls) do
-		levels[n] = p[2]
-		mapdata[n] = p[3]
-	end
-    
+        for n, s in pairs(levels) do
+            table.insert(lvls, {n, s, mapdata[n]})
+        end
+    end
+    table.sort(lvls, function(p1, p2) return p1[1] < p2[1] end)
+    levels, mapdata = {}, {}
+    for n, p in pairs(lvls) do
+        levels[n] = p[2]
+        mapdata[n] = p[3]
+    end
+
     -- load levels
     if levels[1] then
         for n, s in pairs(levels) do
@@ -166,7 +170,7 @@ function loadpico8(filename)
             end
         end
     end
-    
+
     -- load mapdata
     if mapdata then
         for n, levelstr in pairs(mapdata) do
@@ -179,7 +183,7 @@ function loadpico8(filename)
             end
         end
     end
-    
+
     -- fill rooms with no mapdata from p8 map
     for n, b in ipairs(data.roomBounds) do
         if not data.rooms[n] then
@@ -197,7 +201,7 @@ function loadpico8(filename)
                     end
                 end
             end
-            
+
             data.rooms[n] = room
         end
     end
@@ -206,19 +210,19 @@ end
 
 function openPico8(filename)
     newProject()
-    
+
     -- loads into global p8data as well, for spritesheet
-    p8data = loadpico8(filename)    
+    p8data = loadpico8(filename)
     project.rooms = p8data.rooms
-    
+
     app.openFileName = filename
-    
+
     return true
 end
 
 function savePico8(filename)
     local map = fill2d0s(128, 64)
-    
+
     for _, room in ipairs(project.rooms) do
         if not room.hex then
             local i0, j0 = div8(room.x), div8(room.y)
@@ -231,7 +235,7 @@ function savePico8(filename)
             end
         end
     end
-    
+
     local file = io.open(filename, "rb")
     if not file and app.openFileName then
         file = io.open(app.openFileName, "rb")
@@ -239,9 +243,9 @@ function savePico8(filename)
     if not file then
         return false
     end
-    
+
     local out = {}
-    
+
     local ln = 1
     local gfxstart, mapstart
     for line in cr_file_lines(file) do
@@ -249,13 +253,13 @@ function savePico8(filename)
         ln = ln + 1
     end
     file:close()
-            
+
     local levels, mapdata = {}, {}
     for n = 1, #project.rooms do
         local room = project.rooms[n]
         levels[n] = string.format("%g,%g,%g,%g,%s", room.x/128, room.y/128, room.w/16, room.h/16, room.title)
 
-        if room.hex then 
+        if room.hex then
             mapdata[n] = dumproomdata(room)
         end
     end
@@ -281,20 +285,20 @@ function savePico8(filename)
         table.insert(out,"__map__")
     end
 
-    for k,v in ipairs(out) do 
-        if out[k]=="__gfx__" or out[k]=="__map__" then 
+    for k,v in ipairs(out) do
+        if out[k]=="__gfx__" or out[k]=="__map__" then
             local j=k+1
             while j<#out and not out[j]:match("__%a+__") do
                 j=j+1
-            end 
+            end
             local emptyline=""
-            for i=1,out[k]=="__gfx__" and 128 or 256 do 
+            for i=1,out[k]=="__gfx__" and 128 or 256 do
                 emptyline=emptyline.."0"
-            end 
-            for i=j,k+(out[k]=="__gfx__" and 128 or 32) do 
+            end
+            for i=j,k+(out[k]=="__gfx__" and 128 or 32) do
                 table.insert(out,i,emptyline)
             end
-        end 
+        end
     end
     local gfxstart, mapstart
     for k = 1, #out do
@@ -326,7 +330,7 @@ function savePico8(filename)
 
     local cartdata=table.concat(out, "\n")
     -- write to levels table without overwriting the code
-    
+
     cartdata = cartdata:gsub("(%-%-@begin.*levels%s*=%s*){.-}(.*%-%-@end)","%1"..dumplua(levels).."%2")
     cartdata = cartdata:gsub("(%-%-@begin.*mapdata%s*=%s*){.-}(.*%-%-@end)","%1"..dumplua(mapdata).."%2")
 
@@ -343,8 +347,8 @@ function savePico8(filename)
     file = io.open(filename, "wb")
     file:write(cartdata)
     file:close()
-    
+
     app.saveFileName = filename
-    
+
     return true
 end
